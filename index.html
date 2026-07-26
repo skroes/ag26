@@ -309,6 +309,10 @@ const TEMPELPAD={
   {l:"3",lat:37.28957,lng:13.59231,naam:"Tempio della Concordia (96 m)",info:"Hét pronkstuk — een van de best bewaarde Griekse tempels ter wereld. Onderweg passeer je de Byzantijnse graven in de muur. Verlicht = magisch."},
   {l:"4",lat:37.29029,lng:13.58593,naam:"Tempio di Ercole (76 m)",info:"De oudste tempel (ca. 510 v.Chr.). Keuze: terug naar Giunone (+44 m over 1,4 km) — óf door naar stop 5 als de auto daar staat."},
   {l:"5",lat:37.28855,lng:13.58208,naam:"Parcheggio Porta V (47 m) — uitgang-optie",info:"Exacte parking (OSM): 37.28855, 13.58208. Drop-off-plan: gezin afzetten bij Giunone → auto hierheen (±7 min om) → jij checkt hier in met je eigen QR → tegemoet lopen. ⚠️ Vraag ÉÉRST bij Giunone: 'Porta V è aperta stasera?' — avond-uitgang onzeker. Nee? Auto bij Giunone laten."}
+ ],
+ parkings:[
+  {naam:"🅿 Parking Giunone (betaald)",lat:37.29044,lng:13.59945,info:"Parkeerterrein bij de avond-ingang (OSM: 37.29044, 13.59945 — betaald). Hier parkeren als jullie samen in- en uitgaan via Giunone."},
+  {naam:"🅿 Parcheggio Porta V",lat:37.28855,lng:13.58208,info:"Westkant (OSM: 37.28855, 13.58208). Alleen relevant bij het drop-off-plan (stop 5) — check eerst of Porta V 's avonds open is."}
  ]};
 let tempelOn=false, tempelLayers=[];
 function toggleTempel(){
@@ -316,11 +320,23 @@ function toggleTempel(){
   tempelOn=true; bouwMenu(); badge();
   const pl=L.polyline(TEMPELPAD.pts,{color:'#c8871e',weight:5,opacity:.95,dashArray:'1 9',lineCap:'round'}).addTo(map);
   tempelLayers.push(pl);
+  TEMPELPAD.parkings.forEach(pk=>{
+    const m=L.marker([pk.lat,pk.lng],{icon:L.divIcon({className:'',html:'<div style="width:40px;height:40px;display:flex;align-items:center;justify-content:center"><span style="background:#2050a3;color:#fff;font-family:Poppins;font-weight:700;font-size:14px;width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.4)">P</span></div>',iconSize:[40,40],iconAnchor:[20,20]})}).addTo(map);
+    m.on('click',()=>sheetParking(pk)); tempelLayers.push(m);
+  });
   TEMPELPAD.stops.forEach(st=>{
     const m=L.marker([st.lat,st.lng],{icon:L.divIcon({className:'',html:'<div style="width:40px;height:40px;display:flex;align-items:center;justify-content:center"><span style="background:#c8871e;color:#fff;font-family:Poppins;font-weight:700;font-size:15px;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.4)">'+st.l+'</span></div>',iconSize:[40,40],iconAnchor:[20,20]})}).addTo(map);
     m.on('click',()=>sheetTempel(st)); tempelLayers.push(m);
   });
   map.fitBounds(L.latLngBounds(TEMPELPAD.pts),{padding:[50,50]});
+}
+function sheetParking(pk){
+  huidigPoi=null; document.getElementById('favbtn2').classList.remove('on');
+  document.getElementById('sheetbody').innerHTML=`
+    <div class="cat">🏛 tempelpad · parking</div><h2>${pk.naam}</h2>
+    <div class="letop">${pk.info}</div>
+    <a class="go" href="https://www.google.com/maps/dir/?api=1&destination=${pk.lat},${pk.lng}&travelmode=driving" target="_blank">📍 Navigeer naar deze parking</a>`;
+  document.getElementById('sheet').classList.add('open');
 }
 function sheetTempel(st){
   huidigPoi=null; document.getElementById('favbtn2').classList.remove('on');
