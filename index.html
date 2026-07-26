@@ -6,55 +6,69 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Agrigento — juli 2026</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Noto+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  :root { --ink:#1a1a1a; --paper:#faf8f4; --sea:#0b5e8a; --oker:#c8871e; --go:#1e9e4f; }
+  /* Kroescontrol-huisstijl: navy #222b5b · teal #1c9c8e · coral #e65760 · amber #f59e0b · blue #2050a3 · Poppins/Noto Sans */
+  :root { --navy:#222b5b; --teal:#1c9c8e; --coral:#e65760; --amber:#f59e0b; --blue:#2050a3;
+          --bg:#f6f7fb; --ink:#1c2033; --mute:#6b7089; --card:#ffffff; --lijn:#e3e5ef; }
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-  html,body { height:100%; font-family:-apple-system,'Segoe UI',Roboto,sans-serif; background:var(--paper); color:var(--ink); }
+  html,body { height:100%; font-family:'Noto Sans',-apple-system,sans-serif; background:var(--bg); color:var(--ink); }
   #app { display:flex; flex-direction:column; height:100dvh; }
-  header { padding:8px 12px calc(6px) 12px; background:var(--paper); border-bottom:2px solid var(--ink); z-index:1200; }
-  header h1 { font-size:17px; letter-spacing:.5px; }
-  header .sub { font-size:11px; color:#555; }
-  .chips { display:flex; gap:6px; overflow-x:auto; padding:8px 12px; background:var(--paper); z-index:1100; border-bottom:1px solid #ddd; }
+  header { padding:calc(10px + env(safe-area-inset-top)) 16px 10px; background:var(--navy); color:#fff; z-index:1200; }
+  header h1 { font-family:Poppins,sans-serif; font-size:18px; font-weight:700; letter-spacing:.3px; display:flex; align-items:center; gap:8px; }
+  header h1 .dot { width:9px; height:9px; border-radius:50%; background:var(--teal); box-shadow:0 0 0 0 rgba(28,156,142,.6); animation:puls 2.2s infinite; }
+  @keyframes puls { 70% { box-shadow:0 0 0 9px rgba(28,156,142,0);} 100% { box-shadow:0 0 0 0 rgba(28,156,142,0);} }
+  @media (prefers-reduced-motion: reduce) { header h1 .dot { animation:none; } * { transition:none !important; } }
+  header .sub { font-size:11px; color:#b8bdd6; margin-top:2px; }
+  .chips { display:flex; gap:8px; overflow-x:auto; padding:10px 14px; background:var(--card); z-index:1100; border-bottom:1px solid var(--lijn); }
   .chips::-webkit-scrollbar { display:none; }
-  .chip { flex:0 0 auto; min-height:44px; padding:0 16px; border:2px solid var(--ink); border-radius:22px; background:#fff; font-size:14px; font-weight:600; display:flex; align-items:center; gap:5px; }
-  .chip.on { background:var(--sea); color:#fff; border-color:var(--sea); box-shadow:0 2px 6px rgba(11,94,138,.45); }
+  .chip { flex:0 0 auto; min-height:44px; padding:0 16px; border:1.5px solid var(--lijn); border-radius:22px; background:var(--card); color:var(--ink); font-family:'Noto Sans'; font-size:14px; font-weight:600; display:flex; align-items:center; gap:5px; box-shadow:0 1px 3px rgba(34,43,91,.07); }
+  .chip.on { background:var(--navy); color:#fff; border-color:var(--navy); box-shadow:0 3px 10px rgba(34,43,91,.35); }
   .chip.on::before { content:"✓ "; font-weight:800; }
-  .chip.now.on { background:var(--go); border-color:var(--go); box-shadow:0 2px 6px rgba(30,158,79,.45); }
+  .chip.now.on { background:var(--teal); border-color:var(--teal); box-shadow:0 3px 10px rgba(28,156,142,.4); }
   #map { flex:1; z-index:1; }
-  #sheet { position:fixed; left:0; right:0; bottom:-100%; max-height:62dvh; background:#fff; border-top:3px solid var(--ink); border-radius:14px 14px 0 0; padding:14px 16px calc(14px + env(safe-area-inset-bottom)); overflow-y:auto; transition:bottom .22s ease; z-index:1300; box-shadow:0 -4px 24px rgba(0,0,0,.25); }
+  #sheet { position:fixed; left:0; right:0; bottom:-100%; max-height:64dvh; background:var(--card); border-radius:20px 20px 0 0; padding:8px 18px calc(16px + env(safe-area-inset-bottom)); overflow-y:auto; transition:bottom .25s cubic-bezier(.3,1,.4,1); z-index:1300; box-shadow:0 -8px 32px rgba(34,43,91,.28); }
+  #sheet::before { content:""; display:block; width:40px; height:4px; border-radius:2px; background:var(--lijn); margin:4px auto 12px; }
   #sheet.open { bottom:0; }
-  #sheet h2 { font-size:19px; margin-bottom:2px; padding-right:44px; }
-  #sheet .cat { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--sea); }
-  #sheet .row { display:flex; flex-wrap:wrap; gap:6px; margin:10px 0; }
-  .tag { font-size:13px; background:#f0ece4; border-radius:6px; padding:5px 9px; }
-  .tag.warn { background:#fdecec; }
-  .tag.ok { background:#e4f5ea; }
-  #sheet .letop { font-size:14px; line-height:1.45; background:#fff8e6; border-left:4px solid var(--oker); padding:9px 11px; border-radius:0 8px 8px 0; margin:10px 0; }
-  #sheet a.go { display:block; text-align:center; background:var(--sea); color:#fff; font-weight:700; font-size:16px; padding:13px; border-radius:10px; text-decoration:none; margin-top:10px; }
-  #close { position:absolute; top:10px; right:12px; width:38px; height:38px; border:2px solid var(--ink); border-radius:50%; background:#fff; font-size:18px; font-weight:700; }
-  .klim { display:inline-flex; align-items:center; gap:4px; }
-  .klim i { display:inline-block; width:7px; border-radius:2px; background:var(--oker); }
-  .banner { font-size:11px; padding:4px 12px; background:#eee; color:#444; }
+  #sheet h2 { font-family:Poppins,sans-serif; font-size:19px; font-weight:700; margin-bottom:2px; padding-right:88px; line-height:1.25; }
+  #sheet .cat { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.4px; color:var(--teal); }
+  #sheet .row { display:flex; flex-wrap:wrap; gap:7px; margin:11px 0; }
+  .tag { font-size:13px; font-weight:600; background:var(--bg); border:1px solid var(--lijn); border-radius:9px; padding:6px 10px; font-variant-numeric:tabular-nums; }
+  .tag.warn { background:#fdeeee; border-color:#f5c9cc; color:#a33540; }
+  .tag.ok { background:#e7f6f3; border-color:#bfe5df; color:#116e63; }
+  #sheet .letop { font-size:14px; line-height:1.5; background:#fdf6e7; border-left:4px solid var(--amber); padding:10px 12px; border-radius:0 10px 10px 0; margin:10px 0; }
+  #sheet a.go { display:block; text-align:center; background:var(--navy); color:#fff; font-family:Poppins,sans-serif; font-weight:600; font-size:15px; padding:14px; border-radius:12px; text-decoration:none; margin-top:12px; box-shadow:0 4px 14px rgba(34,43,91,.3); }
+  #sheet a.go:active { transform:scale(.98); }
+  #close { position:absolute; top:14px; right:14px; width:38px; height:38px; border:none; border-radius:50%; background:var(--bg); color:var(--mute); font-size:16px; font-weight:700; }
+  /* signature: klim-profiel — spec §6 vroeg hier letterlijk om */
+  .klimbar { display:flex; align-items:flex-end; gap:2px; height:20px; }
+  .klimbar i { display:inline-block; width:5px; border-radius:2px 2px 0 0; background:var(--teal); }
+  .klimbar.zwaar i { background:var(--coral); }
+  .klimbar.middel i { background:var(--amber); }
+  .banner { font-size:11px; padding:5px 14px; background:var(--navy); color:#b8bdd6; }
   .lm { font-size:22px; text-shadow:0 0 3px #fff,0 0 6px #fff; }
-  .fab { position:fixed; right:12px; width:48px; height:48px; border-radius:50%; border:2px solid var(--ink); background:#fff; font-size:20px; z-index:1150; box-shadow:0 2px 8px rgba(0,0,0,.3); }
-  #locbtn { bottom:calc(150px + env(safe-area-inset-bottom)); }
-  #locbtn.on { background:#1a56b0; }
-  #basebtn { bottom:calc(206px + env(safe-area-inset-bottom)); }
-  #favbtn2 { position:absolute; top:10px; right:58px; width:38px; height:38px; border:2px solid var(--oker); border-radius:50%; background:#fff; font-size:17px; }
-  #favbtn2.on { background:var(--oker); }
+  .fab { position:fixed; right:14px; width:50px; height:50px; border-radius:50%; border:none; background:var(--card); font-size:20px; z-index:1150; box-shadow:0 3px 12px rgba(34,43,91,.3); }
+  .fab:active { transform:scale(.94); }
+  #locbtn { bottom:calc(156px + env(safe-area-inset-bottom)); }
+  #locbtn.on { background:var(--blue); }
+  #basebtn { bottom:calc(216px + env(safe-area-inset-bottom)); }
+  #routebtn { bottom:calc(276px + env(safe-area-inset-bottom)) !important; }
+  #favbtn2 { position:absolute; top:14px; right:60px; width:38px; height:38px; border:none; border-radius:50%; background:var(--bg); font-size:16px; }
+  #favbtn2.on { background:var(--amber); }
 </style>
 </head>
 <body>
 <div id="app">
   <header>
-    <h1>AGRIGENTO — juli 2026 · v4</h1>
+    <h1><span class="dot"></span>Agrigento <span style="font-weight:600;color:#b8bdd6;font-size:14px">· juli 2026 · v5</span></h1>
     <div class="sub">Thuisbasis: Via Esseneto 44 (midden-straat aanname, ±210 m) · data-check 26-07-2026 · 11–18 u = binnen/schaduw</div>
   </header>
   <div class="chips" id="chips"></div>
   <div id="map"></div>
   <div class="banner">Hoogtes = echte metingen (EU-DEM). Uitzicht-plekken ≈ coördinaat bij benadering. Tik een marker voor info + route.</div>
 </div>
-<button class="fab" id="routebtn" onclick="toggleRoute()" aria-label="aanrijroute" style="bottom:calc(262px + env(safe-area-inset-bottom));">🛣</button>
+<button class="fab" id="routebtn" onclick="toggleRoute()" aria-label="aanrijroute">🛣</button>
 <button class="fab" id="basebtn" onclick="wisselBase()" aria-label="kaartstijl">🌓</button>
 <button class="fab" id="locbtn" onclick="toggleLocate()" aria-label="mijn locatie">📍</button>
 <div id="sheet"><button id="close" aria-label="sluiten">✕</button><button id="favbtn2" aria-label="favoriet">⭐</button><div id="sheetbody"></div></div>
@@ -202,7 +216,9 @@ function render(){
 function sheet(p){
   huidigPoi=p; document.getElementById('favbtn2').classList.toggle('on',favs.has(p.id));
   const li=loopInfo(p), st=openStatus(p,nowMin());
-  const klim=p.modus==="lopen"?`<span class="tag">🚶 ±${li.d} m · ${li.dh>=0?"+":""}${li.dh} m (${li.zw})</span>`:`<span class="tag">${p.modus==="auto"?"🚗 auto":"🚌 bus"} · hoogte ${p.elev} m</span>`;
+  const nB=Math.min(6,Math.max(1,Math.ceil(Math.abs(li.dh)/20))), kls=Math.abs(li.dh)>60?"zwaar":(Math.abs(li.dh)>25?"middel":"");
+  const bars='<span class="klimbar '+kls+'">'+Array.from({length:nB},(_,i)=>`<i style="height:${6+i*(14/Math.max(1,nB-1))}px"></i>`).join("")+'</span>';
+  const klim=p.modus==="lopen"?`<span class="tag" style="display:inline-flex;align-items:center;gap:7px">🚶 ±${li.d} m ${bars} ${li.dh>=0?"+":""}${li.dh} m</span>`:`<span class="tag">${p.modus==="auto"?"🚗 auto":"🚌 bus"} · ${p.elev} m</span>`;
   document.getElementById('sheetbody').innerHTML=`
     <div class="cat">${CATS[p.cat].e} ${p.cat}</div><h2>${p.naam}</h2>
     <div class="row">
