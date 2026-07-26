@@ -302,13 +302,13 @@ function sheetWandel(seg){
 
 // ===== Tempelpad — looproute op het Valle-terrein (avond), hoogtes EU-DEM 26-07 =====
 const TEMPELPAD={
- pts:[[37.2898,13.6001],[37.2893,13.6002],[37.2887,13.6003],[37.2885,13.5990],[37.2884,13.5965],[37.28843,13.59205],[37.2887,13.5895],[37.2886,13.5875],[37.28855,13.58465],[37.2888,13.5829]],
+ pts:[[37.28982,13.60001],[37.28852,13.60039],[37.29,13.60017],[37.28987,13.60015],[37.28978,13.60013],[37.28976,13.60013],[37.28962,13.60009],[37.28952,13.60005],[37.28943,13.59999],[37.28936,13.59991],[37.28931,13.59984],[37.28921,13.59966],[37.28922,13.59923],[37.28924,13.59802],[37.28926,13.59737],[37.28929,13.59616],[37.28932,13.59524],[37.28934,13.59488],[37.28936,13.59448],[37.28941,13.59397],[37.28943,13.59382],[37.28945,13.59375],[37.28948,13.59368],[37.28969,13.5933],[37.28986,13.59294],[37.28994,13.59277],[37.28997,13.59269],[37.28999,13.59262],[37.29001,13.59253],[37.29002,13.59244],[37.29002,13.59234],[37.29001,13.59224],[37.28995,13.59161],[37.28989,13.59111],[37.28986,13.59085],[37.28986,13.59075],[37.28986,13.59063],[37.28988,13.59044],[37.29001,13.58971],[37.29002,13.58967],[37.29021,13.58857],[37.2903,13.58799],[37.29031,13.58798],[37.2904,13.58742],[37.29042,13.58729],[37.29049,13.58686],[37.29057,13.58642],[37.29059,13.58633],[37.29064,13.5862],[37.29071,13.58618],[37.29029,13.58593],[37.28855,13.58208]], // Via Sacra = echte OSM-way-geometrie (26-07)
  stops:[
-  {l:"1",lat:37.2898,lng:13.6001,naam:"Ingang Giunone / ticket office",info:"QR's scannen bij de poort (ticket office alleen nodig zonder online tickets). Start op 111 m."},
-  {l:"2",lat:37.2887,lng:13.6003,naam:"Tempio di Giunone (119 m)",info:"Direct bij de ingang, hoogste punt op de rug — meteen je eerste uitzicht over de hele vallei + zee."},
-  {l:"3",lat:37.28843,lng:13.59205,naam:"Tempio della Concordia (68 m)",info:"Hét pronkstuk — een van de best bewaarde Griekse tempels ter wereld. Onderweg passeer je de Byzantijnse graven in de muur. Verlicht = magisch."},
-  {l:"4",lat:37.28855,lng:13.58465,naam:"Tempio di Ercole (56 m)",info:"De oudste tempel (ca. 510 v.Chr.). Keuze: terug naar Giunone (+63 m over 1,6 km) — óf door naar stop 5 als de auto daar staat."},
-  {l:"5",lat:37.2888,lng:13.5829,naam:"Porta V — parkeerplaats (uitgang-optie)",info:"Drop-off-plan: gezin afzetten bij Giunone → auto hierheen (±7 min om) → jij loopt binnendoor tegemoet → iedereen eindigt bij de auto, niemand klimt terug. ⚠️ Vraag ÉÉRST bij de Giunone-steward: 'Possiamo uscire da Porta V stasera?' — data zegt Porta V tot 19:00, avond-uitgang onzeker. Nee? Dan auto bij Giunone laten."}
+  {l:"1",lat:37.28982,lng:13.60001,naam:"Biglietteria / ingang Giunone (111 m)",info:"QR's scannen bij de poort (ticket office alleen nodig zonder online tickets)."},
+  {l:"2",lat:37.28852,lng:13.60039,naam:"Tempio di Giunone — Hera Lacinia (120 m)",info:"Direct bij de ingang, hoogste punt op de rug — meteen je eerste uitzicht over de hele vallei + zee."},
+  {l:"3",lat:37.28957,lng:13.59231,naam:"Tempio della Concordia (96 m)",info:"Hét pronkstuk — een van de best bewaarde Griekse tempels ter wereld. Onderweg passeer je de Byzantijnse graven in de muur. Verlicht = magisch."},
+  {l:"4",lat:37.29029,lng:13.58593,naam:"Tempio di Ercole (76 m)",info:"De oudste tempel (ca. 510 v.Chr.). Keuze: terug naar Giunone (+44 m over 1,4 km) — óf door naar stop 5 als de auto daar staat."},
+  {l:"5",lat:37.28855,lng:13.58208,naam:"Parcheggio Porta V (47 m) — uitgang-optie",info:"Exacte parking (OSM): 37.28855, 13.58208. Drop-off-plan: gezin afzetten bij Giunone → auto hierheen (±7 min om) → jij checkt hier in met je eigen QR → tegemoet lopen. ⚠️ Vraag ÉÉRST bij Giunone: 'Porta V è aperta stasera?' — avond-uitgang onzeker. Nee? Auto bij Giunone laten."}
  ]};
 let tempelOn=false, tempelLayers=[];
 function toggleTempel(){
