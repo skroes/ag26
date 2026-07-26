@@ -310,11 +310,11 @@ function sheetWandel(seg){
 const TEMPELPAD={
  pts:[[37.28982,13.60001],[37.28852,13.60039],[37.29,13.60017],[37.28987,13.60015],[37.28978,13.60013],[37.28976,13.60013],[37.28962,13.60009],[37.28952,13.60005],[37.28943,13.59999],[37.28936,13.59991],[37.28931,13.59984],[37.28921,13.59966],[37.28922,13.59923],[37.28924,13.59802],[37.28926,13.59737],[37.28929,13.59616],[37.28932,13.59524],[37.28934,13.59488],[37.28936,13.59448],[37.28941,13.59397],[37.28943,13.59382],[37.28945,13.59375],[37.28948,13.59368],[37.28969,13.5933],[37.28986,13.59294],[37.28994,13.59277],[37.28997,13.59269],[37.28999,13.59262],[37.29001,13.59253],[37.29002,13.59244],[37.29002,13.59234],[37.29001,13.59224],[37.28995,13.59161],[37.28989,13.59111],[37.28986,13.59085],[37.28986,13.59075],[37.28986,13.59063],[37.28988,13.59044],[37.29001,13.58971],[37.29002,13.58967],[37.29021,13.58857],[37.2903,13.58799],[37.29031,13.58798],[37.2904,13.58742],[37.29042,13.58729],[37.29049,13.58686],[37.29057,13.58642],[37.29059,13.58633],[37.29064,13.5862],[37.29071,13.58618],[37.29029,13.58593],[37.28855,13.58208]], // Via Sacra = echte OSM-way-geometrie (26-07)
  stops:[
-  {l:"1",lat:37.28982,lng:13.60001,naam:"Biglietteria / ingang Giunone (111 m)",info:"QR's scannen bij de poort (ticket office alleen nodig zonder online tickets)."},
-  {l:"2",lat:37.28852,lng:13.60039,naam:"Tempio di Giunone — Hera Lacinia (120 m)",info:"Direct bij de ingang, hoogste punt op de rug — meteen je eerste uitzicht over de hele vallei + zee."},
-  {l:"3",lat:37.28957,lng:13.59231,naam:"Tempio della Concordia (96 m)",info:"Hét pronkstuk — een van de best bewaarde Griekse tempels ter wereld. Onderweg passeer je de Byzantijnse graven in de muur. Verlicht = magisch."},
-  {l:"4",lat:37.29029,lng:13.58593,naam:"Tempio di Ercole (76 m)",info:"De oudste tempel (ca. 510 v.Chr.). Keuze: terug naar Giunone (+44 m over 1,4 km) — óf door naar stop 5 als de auto daar staat."},
-  {l:"5",lat:37.28855,lng:13.58208,naam:"Parcheggio Porta V (47 m) — uitgang-optie",info:"Exacte parking (OSM): 37.28855, 13.58208. Drop-off-plan: gezin afzetten bij Giunone → auto hierheen (±7 min om) → jij checkt hier in met je eigen QR → tegemoet lopen. ⚠️ Vraag ÉÉRST bij Giunone: 'Porta V è aperta stasera?' — avond-uitgang onzeker. Nee? Auto bij Giunone laten."}
+  {l:"1",lat:37.28982,lng:13.60001,naam:"Biglietteria / ingang Giunone (111 m)",info:"QR's scannen bij de poort. Je stapt het grootste archeologische park van Europa binnen (±1300 ha, UNESCO 1997): de Griekse stad Akragas, in de 5e eeuw v.Chr. met ±200.000 inwoners een wereldstad — dichter Pindarus noemde het 'de mooiste stad van de stervelingen'."},
+  {l:"2",lat:37.28852,lng:13.60039,naam:"Tempio di Giunone — Hera Lacinia (120 m)",info:"① Ca. 450 v.Chr., gewijd aan Hera, godin van het huwelijk — 25 van de 34 zuilen staan nog. ② Kijk naar de roodverbrande stenen: sporen van de verwoesting door Carthago in 406 v.Chr. ③ Hoogste punt van de rug — het eerste grote vallei-en-zee-uitzicht. Rechts naast de tempel: het originele offer-altaar."},
+  {l:"3",lat:37.28957,lng:13.59231,naam:"Tempio della Concordia (96 m)",info:"① Onderweg hierheen: de Byzantijnse arcosoli-graven (6e-7e eeuw n.Chr.), uitgehakt in wat ooit de stadsmuur van Akragas was — de rand van de rug wás de muur. ② De Concordia (ca. 440 v.Chr.) is de best bewaarde Griekse tempel buiten Griekenland — hij overleefde omdat hij in 597 n.Chr. basiliek werd. ③ De bronzen gevallen Icarus ervoor is modern: Igor Mitoraj, 2011 — dé fotoplek. Verlicht = magisch."},
+  {l:"4",lat:37.29029,lng:13.58593,naam:"Tempio di Ercole (76 m)",info:"① De oudste tempel van Akragas (ca. 510 v.Chr.), gewijd aan Herakles — ooit 38 zuilen. ② De 8 die overeind staan zijn in 1924 heropgericht door de Britse kapitein Alexander Hardcastle, die in de Villa Aurea woonde die je net passeerde. ③ Keuze: terug naar Giunone (+44 m over 1,4 km, ±20-25 min) — of door naar stop 5 als de auto daar staat."},
+  {l:"5",lat:37.28855,lng:13.58208,naam:"Parcheggio Porta V (47 m) — uitgang-optie",info:"① Porta V was de vijfde stadspoort van Akragas. ② Vlakbij: het Tempio dei Dioscuri — de vier zuilen die hét symbool van Agrigento zijn (romantische reconstructie uit 1836) — en de Kolymbethra-tuin. ③ Exacte parking (OSM): 37.28855, 13.58208. Drop-off-plan: eerst bij Giunone vragen of Porta V 's avonds open is; zo niet → auto bij Giunone."}
  ],
  parkings:[
   {naam:"🅿 Parking Giunone (betaald)",lat:37.29044,lng:13.59945,info:"Parkeerterrein bij de avond-ingang (OSM: 37.29044, 13.59945 — betaald). Hier parkeren als jullie samen in- en uitgaan via Giunone."},
@@ -349,7 +349,7 @@ function sheetTempel(st){
   document.getElementById('sheetbody').innerHTML=`
     <div class="cat">🏛 tempelpad · stop ${st.l} van 5</div><h2>${st.naam}</h2>
     <div class="row"><span class="tag ok">Heen 1,6 km bergaf · terug zelfde pad +63 m · totaal ±3,2 km, 1,5-2 u</span></div>
-    <div class="letop">${st.info}</div>`;
+    <div class="letop" style="font-size:15.5px;line-height:1.55">${st.info}</div>`;
   document.getElementById('sheet').classList.add('open');
 }
 let fDagdeel="nu", fCats=new Set(), markers=[];
