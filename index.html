@@ -81,7 +81,7 @@
 <div id="app">
   <header id="kop">
     <div class="kopregel">
-      <h1><span class="dot"></span>Agrigento <span style="font-weight:600;color:var(--kopsub);font-size:13px">· v7</span></h1>
+      <h1><span class="dot"></span>Agrigento <span style="font-weight:600;color:var(--kopsub);font-size:13px">· v7.1</span></h1>
       <button class="kopknop" id="chev" onclick="togKop()" aria-label="info uitklappen">▾</button>
       <button class="kopknop" onclick="togTheme()" aria-label="licht/donker">🌓</button>
       <button class="kopknop" id="ham" onclick="openMenu()" aria-label="menu">☰<span id="hambadge"></span></button>
@@ -299,6 +299,36 @@ function sheetWandel(seg){
     <a class="go" href="https://www.google.com/maps/dir/?api=1&destination=${e[0]},${e[1]}&travelmode=walking" target="_blank">📍 Loop naar eind van ${seg.l}</a>`;
   document.getElementById('sheet').classList.add('open');
 }
+
+// ===== Tempelpad — looproute op het Valle-terrein (avond), hoogtes EU-DEM 26-07 =====
+const TEMPELPAD={
+ pts:[[37.2898,13.6001],[37.2893,13.6002],[37.2887,13.6003],[37.2885,13.5990],[37.2884,13.5965],[37.28843,13.59205],[37.2887,13.5895],[37.2886,13.5875],[37.28855,13.58465]],
+ stops:[
+  {l:"1",lat:37.2898,lng:13.6001,naam:"Ingang Giunone / ticket office",info:"QR's scannen bij de poort (ticket office alleen nodig zonder online tickets). Start op 111 m."},
+  {l:"2",lat:37.2887,lng:13.6003,naam:"Tempio di Giunone (119 m)",info:"Direct bij de ingang, hoogste punt op de rug — meteen je eerste uitzicht over de hele vallei + zee."},
+  {l:"3",lat:37.28843,lng:13.59205,naam:"Tempio della Concordia (68 m)",info:"Hét pronkstuk — een van de best bewaarde Griekse tempels ter wereld. Onderweg passeer je de Byzantijnse graven in de muur. Verlicht = magisch."},
+  {l:"4",lat:37.28855,lng:13.58465,naam:"Tempio di Ercole (56 m) — keerpunt",info:"De oudste tempel (ca. 510 v.Chr.). Hier omkeren: zelfde pad terug omhoog naar Giunone (+63 m geleidelijk over 1,6 km — rustig aan doen)."}
+ ]};
+let tempelOn=false, tempelLayers=[];
+function toggleTempel(){
+  if(tempelOn){ tempelOn=false; tempelLayers.forEach(l=>map.removeLayer(l)); tempelLayers=[]; bouwMenu(); badge(); return; }
+  tempelOn=true; bouwMenu(); badge();
+  const pl=L.polyline(TEMPELPAD.pts,{color:'#c8871e',weight:5,opacity:.95,dashArray:'1 9',lineCap:'round'}).addTo(map);
+  tempelLayers.push(pl);
+  TEMPELPAD.stops.forEach(st=>{
+    const m=L.marker([st.lat,st.lng],{icon:L.divIcon({className:'',html:'<div style="width:40px;height:40px;display:flex;align-items:center;justify-content:center"><span style="background:#c8871e;color:#fff;font-family:Poppins;font-weight:700;font-size:15px;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.4)">'+st.l+'</span></div>',iconSize:[40,40],iconAnchor:[20,20]})}).addTo(map);
+    m.on('click',()=>sheetTempel(st)); tempelLayers.push(m);
+  });
+  map.fitBounds(L.latLngBounds(TEMPELPAD.pts),{padding:[50,50]});
+}
+function sheetTempel(st){
+  huidigPoi=null; document.getElementById('favbtn2').classList.remove('on');
+  document.getElementById('sheetbody').innerHTML=`
+    <div class="cat">🏛 tempelpad · stop ${st.l} van 4</div><h2>${st.naam}</h2>
+    <div class="row"><span class="tag ok">Heen 1,6 km bergaf · terug zelfde pad +63 m · totaal ±3,2 km, 1,5-2 u</span></div>
+    <div class="letop">${st.info}</div>`;
+  document.getElementById('sheet').classList.add('open');
+}
 let fDagdeel="nu", fCats=new Set(), markers=[];
 const DAGDELEN=[["alles","🗺","Alles","geen tijdfilter"],["nu","🟢","Nu","open én verstandig op dit moment"],["ochtend","🌅","Ochtend","vroeg, vóór de hitte"],["middag","☀️","Middag","11–18 u: binnen/gekoeld"],["avond","🌙","Avond","na 18 u, ook de tempels"]];
 const CATINFO={uitzicht:"mooiste uitzichten & terrassen",bezienswaardigheid:"tempels, kerken, musea",eten:"restaurants — reserveer!",zoet:"ijs & cannoli",strand:"zee & lungomare",uitstapje:"met de auto eropuit",praktisch:"super, taxi, station"};
@@ -320,7 +350,7 @@ function render(){
   badge();
 }
 function badge(){
-  let n=fCats.size+(fFav?1:0)+(routeOn?1:0)+(wandelOn?1:0)+(fDagdeel!=="nu"&&fDagdeel!=="alles"?1:0);
+  let n=fCats.size+(fFav?1:0)+(routeOn?1:0)+(wandelOn?1:0)+(tempelOn?1:0)+(fDagdeel!=="nu"&&fDagdeel!=="alles"?1:0);
   const b=document.getElementById('hambadge');
   b.style.display=n?"inline-flex":"none"; b.textContent=n;
 }
@@ -335,6 +365,7 @@ function bouwMenu(){
   h+=mrow(fFav,"⭐","Mijn favorieten","alleen je eigen selectie","togFavFilter()");
   h+=mrow(routeOn,"🛣","Aanrijroute","Catania → SS640 → Agrigento, met waypoints","toggleRoute()");
   h+=mrow(wandelOn,"🚶","Looproute zo-avond","huisje → Atenea → boulevard → huisje · 4,9 km, 5 segmenten","toggleWandel()");
+  h+=mrow(tempelOn,"🏛","Tempelpad (op het terrein)","Giunone → Concordia → Ercole en terug · 3,2 km","toggleTempel()");
   Object.entries(CATS).forEach(([k,v])=>{ h+=mrow(fCats.has(k),v.e,k.charAt(0).toUpperCase()+k.slice(1),CATINFO[k],`kiesCat('${k}')`); });
   document.getElementById('dbody').innerHTML=h;
 }
