@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Agrigento — juli 2026</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+  :root { --ink:#1a1a1a; --paper:#faf8f4; --sea:#0b5e8a; --oker:#c8871e; --go:#1e9e4f; }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body { height:100%; font-family:-apple-system,'Segoe UI',Roboto,sans-serif; background:var(--paper); color:var(--ink); }
+  #app { display:flex; flex-direction:column; height:100dvh; }
+  header { padding:8px 12px calc(6px) 12px; background:var(--paper); border-bottom:2px solid var(--ink); z-index:1200; }
+  header h1 { font-size:17px; letter-spacing:.5px; }
+  header .sub { font-size:11px; color:#555; }
+  .chips { display:flex; gap:6px; overflow-x:auto; padding:8px 12px; background:var(--paper); z-index:1100; border-bottom:1px solid #ddd; }
+  .chips::-webkit-scrollbar { display:none; }
+  .chip { flex:0 0 auto; min-height:44px; padding:0 16px; border:2px solid var(--ink); border-radius:22px; background:#fff; font-size:14px; font-weight:600; display:flex; align-items:center; gap:5px; }
+  .chip.on { background:var(--sea); color:#fff; border-color:var(--sea); box-shadow:0 2px 6px rgba(11,94,138,.45); }
+  .chip.on::before { content:"✓ "; font-weight:800; }
+  .chip.now.on { background:var(--go); border-color:var(--go); box-shadow:0 2px 6px rgba(30,158,79,.45); }
+  #map { flex:1; z-index:1; }
+  #sheet { position:fixed; left:0; right:0; bottom:-100%; max-height:62dvh; background:#fff; border-top:3px solid var(--ink); border-radius:14px 14px 0 0; padding:14px 16px calc(14px + env(safe-area-inset-bottom)); overflow-y:auto; transition:bottom .22s ease; z-index:1300; box-shadow:0 -4px 24px rgba(0,0,0,.25); }
+  #sheet.open { bottom:0; }
+  #sheet h2 { font-size:19px; margin-bottom:2px; padding-right:44px; }
+  #sheet .cat { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--sea); }
+  #sheet .row { display:flex; flex-wrap:wrap; gap:6px; margin:10px 0; }
+  .tag { font-size:13px; background:#f0ece4; border-radius:6px; padding:5px 9px; }
+  .tag.warn { background:#fdecec; }
+  .tag.ok { background:#e4f5ea; }
+  #sheet .letop { font-size:14px; line-height:1.45; background:#fff8e6; border-left:4px solid var(--oker); padding:9px 11px; border-radius:0 8px 8px 0; margin:10px 0; }
+  #sheet a.go { display:block; text-align:center; background:var(--sea); color:#fff; font-weight:700; font-size:16px; padding:13px; border-radius:10px; text-decoration:none; margin-top:10px; }
+  #close { position:absolute; top:10px; right:12px; width:38px; height:38px; border:2px solid var(--ink); border-radius:50%; background:#fff; font-size:18px; font-weight:700; }
+  .klim { display:inline-flex; align-items:center; gap:4px; }
+  .klim i { display:inline-block; width:7px; border-radius:2px; background:var(--oker); }
+  .banner { font-size:11px; padding:4px 12px; background:#eee; color:#444; }
+  .lm { font-size:22px; text-shadow:0 0 3px #fff,0 0 6px #fff; }
+  .fab { position:fixed; right:12px; width:48px; height:48px; border-radius:50%; border:2px solid var(--ink); background:#fff; font-size:20px; z-index:1150; box-shadow:0 2px 8px rgba(0,0,0,.3); }
+  #locbtn { bottom:calc(150px + env(safe-area-inset-bottom)); }
+  #locbtn.on { background:#1a56b0; }
+  #basebtn { bottom:calc(206px + env(safe-area-inset-bottom)); }
+  #favbtn2 { position:absolute; top:10px; right:58px; width:38px; height:38px; border:2px solid var(--oker); border-radius:50%; background:#fff; font-size:17px; }
+  #favbtn2.on { background:var(--oker); }
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1>AGRIGENTO — juli 2026 · v3</h1>
+    <div class="sub">Thuisbasis: Via Esseneto 44 (midden-straat aanname, ±210 m) · data-check 26-07-2026 · 11–18 u = binnen/schaduw</div>
+  </header>
+  <div class="chips" id="chips"></div>
+  <div id="map"></div>
+  <div class="banner">Hoogtes = echte metingen (EU-DEM). Uitzicht-plekken ≈ coördinaat bij benadering. Tik een marker voor info + route.</div>
+</div>
+<button class="fab" id="routebtn" onclick="toggleRoute()" aria-label="aanrijroute" style="bottom:calc(262px + env(safe-area-inset-bottom));">🛣</button>
+<button class="fab" id="basebtn" onclick="wisselBase()" aria-label="kaartstijl">🌓</button>
+<button class="fab" id="locbtn" onclick="toggleLocate()" aria-label="mijn locatie">📍</button>
+<div id="sheet"><button id="close" aria-label="sluiten">✕</button><button id="favbtn2" aria-label="favoriet">⭐</button><div id="sheetbody"></div></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ====== DATA — POI toevoegen? Kopieer een blok, pas velden aan. slots per dag: [ [start,eind], ... ] in minuten; null = onbekend ======
+const THUIS = { lat:37.3066, lng:13.5872, elev:210, naam:"Thuisbasis (Via Esseneto)" };
+// dagcodes: 0=zo 1=ma 2=di 3=wo 4=do 5=vr 6=za  — slots: per dag array van [vanMin,totMin]; "?" = onbekend
+const ALLE = "alle";
+function S(open, dicht=[]) { // helper: zelfde venster elke dag, behalve dichte dagen
+  const w={}; for(let d=0;d<7;d++) w[d] = dicht.includes(d) ? [] : open; return w;
+}
+const POIS = [
+ // — uitzicht (nieuw, jouw vraag) —
+ {id:"redigirgenti", naam:"Re di Girgenti", cat:"uitzicht", lat:37.2946, lng:13.5903, elev:150, modus:"auto", dagdeel:["avond"], slots:S([[750,900],[1170,1380]]), kosten:"€€€", res:true, letop:"HÉT uitzicht-restaurant: dineren met zicht op de tempels. Reserveren. Coördinaat bij benadering."},
+ {id:"kokalos", naam:"Kokalos (terras)", cat:"uitzicht", lat:37.2872, lng:13.6046, elev:120, modus:"auto", dagdeel:["avond"], slots:S([[1140,1380]]), kosten:"€€", res:true, letop:"Terras met tempel-uitzicht, klassiek Siciliaans. Romantisch bij zonsondergang (±20:15). Coördinaat bij benadering."},
+ {id:"terrazzadei", naam:"La Terrazza degli Dei", cat:"uitzicht", lat:37.2905, lng:13.5883, elev:105, modus:"auto", dagdeel:["avond"], slots:S([[1170,1380]]), kosten:"€€€", res:true, letop:"Zomerterras: verlichte tempels vanaf de vroege avond. Bewust rustig tempo. Coördinaat bij benadering."},
+ {id:"opera", naam:"Opera (rooftop)", cat:"uitzicht", lat:37.3107, lng:13.5822, elev:270, modus:"lopen", dagdeel:["avond"], slots:S([[1140,1380]]), kosten:"€€", res:true, letop:"Rooftop-patio met tempeldal-zicht, centro storico. Coördinaat bij benadering."},
+ {id:"vialevittoria", naam:"Viale della Vittoria (panorama-wandeling)", cat:"uitzicht", lat:37.3081, lng:13.5892, elev:250, modus:"lopen", dagdeel:["ochtend","avond"], slots:S([[0,1440]]), kosten:"gratis", res:false, letop:"Vlakke boulevard met panorama over tempeldal + zee. Aperitivo: Bar Del Viale of wijnbar Folli Follie."},
+ // — bezienswaardigheden —
+ {id:"valle-avond", naam:"Valle dei Templi (ingang Giunone)", cat:"bezienswaardigheid", lat:37.2898, lng:13.6001, elev:111, modus:"auto", dagdeel:["ochtend","avond"], slots:S([[510,1320]]), kosten:"€17+€3", res:false, letop:"★ TIP: ga 's AVONDS — juli open tot 22:00 (weekend 23:00), verlichte tempels, afgekoeld. Start hier, loop bergaf naar Porta V. Let op: bij Porta V géén veilig voetpad terug — taxi/auto-logistiek vooraf regelen. Online tickets = geen rij."},
+ {id:"kolymbethra", naam:"Giardino della Kolymbethra", cat:"bezienswaardigheid", lat:37.2916, lng:13.5819, elev:57, modus:"auto", dagdeel:["ochtend","avond"], slots:S([[600,1200]]), kosten:"apart, na Valle-entree", res:false, letop:"Citrustuin in het dal — de enige schaduw in het park. Hypogeum alleen op reservering."},
+ {id:"griffo", naam:"Museo Archeologico Griffo", cat:"bezienswaardigheid", lat:37.2970, lng:13.5889, elev:123, modus:"bus", dagdeel:["middag"], slots:S([[540,1140]]), kosten:"combiticket Valle", res:false, letop:"Binnen en gekoeld — dé middaggat-bestemming. Terug omhoog lopen is niks: bus/taxi."},
+ {id:"smgreci", naam:"Santa Maria dei Greci", cat:"bezienswaardigheid", lat:37.3130, lng:13.5778, elev:328, modus:"lopen", dagdeel:["ochtend","middag"], slots:S([[600,1140]]), kosten:"combiticket", res:false, letop:"Kerk bovenop een Griekse tempel; glazen vloer over de fundering. Stevige klim (+118 m)."},
+ {id:"santospirito", naam:"Monastero di Santo Spirito", cat:"bezienswaardigheid", lat:37.3113, lng:13.5836, elev:285, modus:"lopen", dagdeel:["ochtend","middag"], slots:{0:[[510,810]],1:[],2:[[510,1110]],3:[[510,1110]],4:[[510,1110]],5:[[510,1110]],6:[[510,1110]]}, kosten:"klein bedrag", res:false, letop:"Stucwerk van Serpotta; nonnen verkopen amaretti. Ingang lastig te vinden. ZO alleen ochtend, MA DICHT."},
+ {id:"cattedrale", naam:"Cattedrale San Gerlando (dakterras)", cat:"bezienswaardigheid", lat:37.3141, lng:13.5760, elev:312, modus:"lopen", dagdeel:["ochtend","middag"], slots:S([[570,1140]]), kosten:"±€5 incl. museum", res:false, letop:"Hoogste punt van de stad (+102 m klim) — dakterras met uitzicht. Sluit 19:00, dus zonsondergang lukt níet."},
+ {id:"teatro", naam:"Teatro Pirandello", cat:"bezienswaardigheid", lat:37.3115, lng:13.5771, elev:279, modus:"lopen", dagdeel:["ochtend"], slots:null, kosten:"klein bedrag", res:false, letop:"Openingstijden onbetrouwbaar; 's middags vaak dicht. Gok = ochtend."},
+ {id:"viaatenea", naam:"Via Atenea (avondwandeling)", cat:"bezienswaardigheid", lat:37.3101, lng:13.5850, elev:261, modus:"lopen", dagdeel:["avond"], slots:S([[0,1440]]), kosten:"gratis", res:false, letop:"Overdag veel dicht/leegstand — alleen 's avonds de moeite."},
+ // — eten & zoet —
+ {id:"nuccio", naam:"Nuccio Meat&Fish", cat:"eten", lat:37.3080, lng:13.5887, elev:260, modus:"lopen", dagdeel:["avond"], slots:{0:[[720,900],[1140,1350]],1:[[720,900],[1140,1350]],2:[[720,900],[1140,1350]],3:[],4:[[720,900],[1140,1350]],5:[[720,900],[1140,1350]],6:[[720,900],[1140,1350]]}, kosten:"€€", res:true, letop:"4,9★ — locals worden zonder reservering weggestuurd. WO dicht."},
+ {id:"usta", naam:"Usta braci&aromi", cat:"eten", lat:37.3104, lng:13.5834, elev:269, modus:"lopen", dagdeel:["middag","avond"], slots:{0:[],1:[[720,870],[1080,1380]],2:[[720,870],[1080,1380]],3:[[720,870],[1080,1380]],4:[[720,870],[1080,1380]],5:[[720,870],[1080,1380]],6:[[720,870],[1080,1380]]}, kosten:"€€", res:true, letop:"4,9★, gastheer Giuliano. Óók 's middags open — zeldzaam. ZO dicht."},
+ {id:"santarfo", naam:"Sant'Arfo Enosteria", cat:"eten", lat:37.3130, lng:13.5780, elev:329, modus:"lopen", dagdeel:["avond"], slots:{0:[[750,930],[1170,1380]],1:[[1170,1380]],2:[[1170,1380]],3:[],4:[[1170,1380]],5:[[1170,1380]],6:[[1170,1380]]}, kosten:"€€", res:true, letop:"4,9★. Weinig Engels. WO dicht. Zwaarste klim van de eetplekken (+119 m)."},
+ {id:"cozzitorto", naam:"Cozzitorto Osteria", cat:"eten", lat:37.3122, lng:13.5758, elev:288, modus:"lopen", dagdeel:["avond"], slots:{0:[[1140,1350]],1:[[1140,1350]],2:[[1140,1350]],3:[],4:[[1140,1350]],5:[[1140,1350]],6:[[1140,1350]]}, kosten:"€€€", res:true, letop:"4,9★ — proefmenu, buiten zitten. WO dicht."},
+ {id:"zaza", naam:"ZAZÀ Bottega Bistrot", cat:"eten", lat:37.3118, lng:13.5794, elev:293, modus:"lopen", dagdeel:["avond"], slots:{0:[[1080,1380]],1:[],2:[[1080,1380]],3:[[1080,1380]],4:[[1080,1380]],5:[[1080,1380]],6:[[1080,1380]]}, kosten:"€€€", res:true, letop:"4,8★, vis en crudo. MA dicht."},
+ {id:"tratttempli", naam:"Trattoria dei Templi", cat:"eten", lat:37.2997, lng:13.5968, elev:170, modus:"auto", dagdeel:["avond"], slots:{0:[[750,900]],1:[[750,900],[1170,1380]],2:[[750,900],[1170,1380]],3:[[750,900],[1170,1380]],4:[[750,900],[1170,1380]],5:[[750,900],[1170,1380]],6:[[750,900],[1170,1380]]}, kosten:"€€", res:true, letop:"4,3★ — eten goed, bediening wisselend. Handig ná de tempels. ZO alleen middag."},
+ {id:"cuspidi", naam:"Le Cuspidi (gelato)", cat:"zoet", lat:37.3078, lng:13.5885, elev:251, modus:"lopen", dagdeel:["ochtend","middag","avond"], slots:{0:[[450,1440]],1:[[450,1440]],2:[],3:[[450,1440]],4:[[450,1440]],5:[[450,1440]],6:[[450,1440]]}, kosten:"€3-4", res:false, letop:"Brioche col gelato, 4,5★ (5000+ reviews). DI dicht. Perfect middaggat-doel: gekoeld ijs om 15:00."},
+ {id:"infurna", naam:"Pasticceria Infurna", cat:"zoet", lat:37.3109, lng:13.5823, elev:270, modus:"lopen", dagdeel:["ochtend","middag","avond"], slots:S([[450,1440]]), kosten:"€1-2,50", res:false, letop:"Cannoli. Sta aan de toog — binnen zitten wordt duur genoemd."},
+ // — strand & uitstapjes —
+ {id:"sanleone", naam:"San Leone — Lungomare", cat:"strand", lat:37.2599, lng:13.5833, elev:4, modus:"auto", dagdeel:["avond"], slots:S([[0,1440]]), kosten:"gratis", res:false, letop:"Boulevard vol restaurants en ijs. Druk in het weekend."},
+ {id:"sanleonestrand", naam:"Spiaggia di San Leone", cat:"strand", lat:37.2581, lng:13.5945, elev:5, modus:"auto", dagdeel:["ochtend","avond"], slots:S([[0,1440]]), kosten:"gratis", res:false, letop:"Zacht zand; recente klachten over afval. Waterschoenen aanbevolen. Lido met parasol = ook middag ok."},
+ {id:"scala", naam:"Scala dei Turchi", cat:"uitstapje", lat:37.2900, lng:13.4728, elev:16, modus:"auto", dagdeel:["ochtend"], slots:S([[480,1180]]), kosten:"€6 pp (pin)", res:false, letop:"Bij hittepiek dicht 11-18u. Rots beklimmen verboden. Gratis strand-uitzichtpunt is volgens reviews net zo mooi als de betaalde toegang."},
+ {id:"puntabianca", naam:"Riserva Punta Bianca", cat:"uitstapje", lat:37.1965, lng:13.6630, elev:32, modus:"auto", dagdeel:["ochtend"], slots:S([[510,1440]]), kosten:"gratis", res:false, letop:"Laatste 1,5 km onverhard — niet met lage auto. Rustiger dan Scala dei Turchi."},
+ {id:"farmfavara", naam:"Farm Cultural Park (Favara)", cat:"uitstapje", lat:37.3134, lng:13.6584, elev:337, modus:"auto", dagdeel:["ochtend","avond"], slots:{0:[[600,1200]],1:[],2:[[600,1200]],3:[[600,1200]],4:[[600,1200]],5:[[600,1200]],6:[[600,1200]]}, kosten:"±€14, buiten gratis", res:false, letop:"Kunstwijk — meningen lopen uiteen. Parkeer bij Via Umberto, niet het centro in. MA dicht."},
+ // — praktisch —
+ {id:"maxsuper", naam:"Max Supermercati", cat:"praktisch", lat:37.3061, lng:13.5847, elev:186, modus:"lopen", dagdeel:["ochtend","avond"], slots:{0:[],1:[[510,810],[990,1230]],2:[[510,810],[990,1230]],3:[[510,810],[990,1230]],4:[[510,810],[990,1230]],5:[[510,810],[990,1230]],6:[[510,810],[990,1230]]}, kosten:"", res:false, letop:"Dichtstbijzijnde supermarkt. Siësta-sluiting 13:30-16:30. ZO dicht."},
+ {id:"station", naam:"Agrigento Centrale (taxi's)", cat:"praktisch", lat:37.3091, lng:13.5847, elev:238, modus:"lopen", dagdeel:["ochtend","middag","avond"], slots:S([[0,1440]]), kosten:"", res:false, letop:"Taxi's staan hier. Stadsbussen: Piazzale Rosselli, 5 min verderop. Lijn ROSSA ≈ thuisbasis→centrum; 1/2/3 → Valle + San Leone."}
+];
+// ====== EINDE DATA ======
+
+const CATS = {uitzicht:{c:"#b3261e",e:"🌇"},bezienswaardigheid:{c:"#c8871e",e:"🏛"},eten:{c:"#0b5e8a",e:"🍽"},zoet:{c:"#8e44ad",e:"🍦"},strand:{c:"#148f9a",e:"🏖"},uitstapje:{c:"#2e7d32",e:"🚗"},praktisch:{c:"#555",e:"ℹ️"}};
+const map = L.map('map',{zoomControl:false}).setView([37.301,13.585],13);
+// Basemaps: faded licht (default — markers springen eruit, leesbaar in zon) en donker
+const BASE = {
+  licht: L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:19,attribution:'© OpenStreetMap © CARTO'}),
+  donker: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:19,attribution:'© OpenStreetMap © CARTO'})
+};
+let baseNu = "licht"; BASE.licht.addTo(map);
+L.control.zoom({position:'bottomright'}).addTo(map);
+
+// Eigen locatie (werkt betrouwbaar via HTTPS, bv. Vercel-deploy)
+let locMarker=null, locCircle=null, locOn=false;
+function toggleLocate(){
+  const btn=document.getElementById('locbtn');
+  if(locOn){ locOn=false; btn.classList.remove('on'); if(locMarker){map.removeLayer(locMarker);locMarker=null;} if(locCircle){map.removeLayer(locCircle);locCircle=null;} return; }
+  if(!navigator.geolocation){ alert("Geen locatie-ondersteuning in deze browser."); return; }
+  locOn=true; btn.classList.add('on');
+  navigator.geolocation.watchPosition(pos=>{
+    const ll=[pos.coords.latitude,pos.coords.longitude];
+    if(!locMarker){ locMarker=L.marker(ll,{icon:L.divIcon({className:'',html:'<span class="lm" style="font-size:26px">🔵</span>',iconSize:[26,26],iconAnchor:[13,13]})}).addTo(map).bindTooltip("Jij");
+      locCircle=L.circle(ll,{radius:pos.coords.accuracy,color:'#1a56b0',weight:1,fillOpacity:.08}).addTo(map);
+      map.setView(ll,15); }
+    else { locMarker.setLatLng(ll); locCircle.setLatLng(ll); locCircle.setRadius(pos.coords.accuracy); }
+  },err=>{ locOn=false; btn.classList.remove('on'); alert("Locatie geweigerd of niet beschikbaar ("+err.message+"). Tip: werkt het best via de Vercel-URL (https)."); },{enableHighAccuracy:true,maximumAge:5000});
+}
+L.marker([THUIS.lat,THUIS.lng],{icon:L.divIcon({className:'',html:'<span class="lm" style="font-size:28px">🏠</span>',iconSize:[30,30],iconAnchor:[15,15]})}).addTo(map).bindTooltip("Thuisbasis — Via Esseneto 44, 92100 Agrigento");
+
+function hav(a,b){const R=6371000,p1=a.lat*Math.PI/180,p2=b.lat*Math.PI/180,dp=p2-p1,dl=(b.lng-a.lng)*Math.PI/180;const x=Math.sin(dp/2)**2+Math.cos(p1)*Math.cos(p2)*Math.sin(dl/2)**2;return 2*R*Math.asin(Math.sqrt(x));}
+function loopInfo(p){const d=Math.round(hav(THUIS,p)*1.3/50)*50;const dh=p.elev-THUIS.elev;let zw="vlak";if(dh>60)zw="stevig ↑";else if(dh>25)zw="licht ↑";else if(dh<-60)zw="stevig ↓ (terug = klim!)";else if(dh<-25)zw="licht ↓";return {d,dh,zw};}
+function openStatus(p,t){ // t = minuten sinds middernacht vandaag; retour: 'open'|'dicht'|'onbekend' + tekst
+  if(!p.slots) return {s:"onbekend",txt:"tijden onbekend"};
+  const day=(new Date()).getDay(); const sl=p.slots[day]||[];
+  for(const [a,b] of sl){ if(t>=a&&t<b){ const rest=b-t; return {s:"open",txt:rest<60?("sluit over "+rest+" min ⚠️"):("open tot "+fm(b))}; } }
+  const next=sl.find(([a])=>a>t); return {s:"dicht",txt:next?("dicht — open om "+fm(next[0])):"vandaag dicht"};
+}
+function fm(m){return String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0");}
+
+function wisselBase(){ map.removeLayer(BASE[baseNu]); baseNu = baseNu==="licht"?"donker":"licht"; BASE[baseNu].addTo(map); }
+
+// ===== Aanrijroute Catania → Agrigento (indicatieve corridor — volg je navigatie) =====
+const ROUTE_PTS = [[37.470,15.045],[37.520,14.780],[37.560,14.480],[37.545,14.280],[37.510,14.095],[37.470,14.040],[37.420,13.950],[37.358,13.845],[37.320,13.660],[37.300,13.615],[37.2898,13.6001],[37.3010,13.5920],[37.3066,13.5872]];
+const WAYPOINTS = [
+ {naam:"Start — Catania (A19 richting Palermo)", lat:37.470, lng:15.045, ico:"🚗", uitleg:"Vanuit Catania de A19 op richting Palermo/Enna. Navigatie-bestemming voor dit eerste stuk: <b>Caltanissetta</b>."},
+ {naam:"🅰 Afrit Caltanissetta → SS640", lat:37.510, lng:14.095, ico:"🅰", uitleg:"Verlaat de A19 bij Caltanissetta en volg de SS640 'Strada degli Scrittori' richting Agrigento — vierbaans en vlot. Deze route blijft zuidoost van het brandgebied (Monti Sicani / SS189). Navigatie: <b>SS640 richting Agrigento</b>."},
+ {naam:"🅱 Tempio di Giunone — binnenkomst", lat:37.2898, lng:13.6001, ico:"🅱", uitleg:"Zet dit als tussenstop in je navigatie: <b>Tempio di Giunone, Agrigento</b>. Je komt dan binnen via de tempel-kant: Valle dei Templi rechts beneden, de stad op de heuvel erboven — instant oriëntatie. Vanaf hier ±10 min naar de thuisbasis."},
+ {naam:"🏁 Thuisbasis", lat:37.3066, lng:13.5872, ico:"🏁", uitleg:"Eindbestemming voor je navigatie: <b>Via Esseneto 44, 92100 Agrigento AG</b>."}
+];
+let routeOn=false, routeLayers=[];
+function toggleRoute(){
+  const btn=document.getElementById('routebtn');
+  if(routeOn){ routeOn=false; btn.style.background="#fff"; routeLayers.forEach(l=>map.removeLayer(l)); routeLayers=[]; render(); return; }
+  routeOn=true; btn.style.background="#c9b3f5";
+  const line=L.polyline(ROUTE_PTS,{color:'#6a35c9',weight:4,dashArray:'8 8',opacity:.85}).addTo(map);
+  routeLayers.push(line);
+  WAYPOINTS.forEach(w=>{
+    const m=L.marker([w.lat,w.lng],{icon:L.divIcon({className:'',html:'<span class="lm" style="font-size:26px">'+w.ico+'</span>',iconSize:[28,28],iconAnchor:[14,14]})}).addTo(map);
+    m.on('click',()=>sheetWaypoint(w)); routeLayers.push(m);
+  });
+  map.fitBounds(line.getBounds(),{padding:[30,30]});
+}
+function sheetWaypoint(w){
+  huidigPoi=null; document.getElementById('favbtn2').classList.remove('on');
+  document.getElementById('sheetbody').innerHTML=`
+    <div class="cat">🛣 aanrijroute</div><h2>${w.naam}</h2>
+    <div class="letop">${w.uitleg}</div>
+    <div class="letop" style="background:#f3edff;border-color:#6a35c9">Lijn op de kaart is indicatief — volg je navigatie. Brandinfo: 19–23 jul (Monti Sicani/SS189); check actueel nieuws vóór vertrek.</div>
+    <a class="go" href="https://www.google.com/maps/dir/?api=1&destination=${w.lat},${w.lng}&travelmode=driving" target="_blank">📍 Navigeer naar dit punt</a>`;
+  document.getElementById('sheet').classList.add('open');
+}
+
+// Favorieten (⭐) — bewaard in localStorage, filter via ⭐-chip
+let favs = new Set(JSON.parse(localStorage.getItem('agr-favs')||"[]"));
+let fFav = false, huidigPoi = null;
+function togFav(){ if(!huidigPoi) return; favs.has(huidigPoi.id)?favs.delete(huidigPoi.id):favs.add(huidigPoi.id);
+  localStorage.setItem('agr-favs',JSON.stringify([...favs]));
+  document.getElementById('favbtn2').classList.toggle('on',favs.has(huidigPoi.id)); render(); }
+document.getElementById('favbtn2').onclick=togFav;
+
+let fDagdeel="nu", fCat=null, markers=[];
+const DAGDELEN=[["nu","🟢 NU"],["ochtend","🌅 Ochtend"],["middag","☀️ Middag (binnen)"],["avond","🌙 Avond"]];
+function nowMin(){const n=new Date();return n.getHours()*60+n.getMinutes();}
+function past(p){
+  if(fFav && !favs.has(p.id)) return false;
+  if(fCat && p.cat!==fCat) return false;
+  if(fDagdeel==="nu"){ const t=nowMin(); const st=openStatus(p,t); if(st.s==="dicht") return false;
+    if(t>=660&&t<1080) return p.dagdeel.includes("middag"); // 11-18u: alleen middag-geschikt
+    return true; }
+  return p.dagdeel.includes(fDagdeel);
+}
+function render(){
+  markers.forEach(m=>map.removeLayer(m)); markers=[];
+  POIS.forEach(p=>{ const on=past(p);
+    const m=L.marker([p.lat,p.lng],{opacity:on?1:0.25,icon:L.divIcon({className:'',html:'<span class="lm">'+CATS[p.cat].e+'</span>',iconSize:[26,26],iconAnchor:[13,13]})}).addTo(map);
+    m.on('click',()=>sheet(p)); markers.push(m); });
+}
+function sheet(p){
+  huidigPoi=p; document.getElementById('favbtn2').classList.toggle('on',favs.has(p.id));
+  const li=loopInfo(p), st=openStatus(p,nowMin());
+  const klim=p.modus==="lopen"?`<span class="tag">🚶 ±${li.d} m · ${li.dh>=0?"+":""}${li.dh} m (${li.zw})</span>`:`<span class="tag">${p.modus==="auto"?"🚗 auto":"🚌 bus"} · hoogte ${p.elev} m</span>`;
+  document.getElementById('sheetbody').innerHTML=`
+    <div class="cat">${CATS[p.cat].e} ${p.cat}</div><h2>${p.naam}</h2>
+    <div class="row">
+      <span class="tag ${st.s==="open"?"ok":(st.s==="dicht"?"warn":"")}">${st.s==="onbekend"?"🕐 tijden onbekend":(st.s==="open"?"🟢 ":"🔴 ")+st.txt}</span>
+      ${klim}
+      ${p.kosten?`<span class="tag">💶 ${p.kosten}</span>`:""}
+      ${p.res?`<span class="tag warn">📞 reserveren!</span>`:""}
+    </div>
+    ${p.letop?`<div class="letop">${p.letop}</div>`:""}
+    <a class="go" href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}${p.modus==="lopen"?"&travelmode=walking":"&travelmode=driving"}" target="_blank">📍 Route in Google Maps</a>`;
+  document.getElementById('sheet').classList.add('open');
+}
+document.getElementById('close').onclick=()=>document.getElementById('sheet').classList.remove('open');
+map.on('click',()=>document.getElementById('sheet').classList.remove('open'));
+
+const chipsEl=document.getElementById('chips');
+DAGDELEN.forEach(([k,lbl])=>{const b=document.createElement('button');b.className="chip"+(k==="nu"?" now on":"");b.textContent=lbl;b.dataset.dd=k;
+  b.onclick=()=>{fDagdeel=k;document.querySelectorAll('[data-dd]').forEach(x=>x.classList.toggle('on',x.dataset.dd===k));render();};chipsEl.appendChild(b);});
+const fb=document.createElement('button');fb.className="chip";fb.textContent="⭐";
+fb.onclick=()=>{fFav=!fFav;fb.classList.toggle('on',fFav);render();};chipsEl.appendChild(fb);
+Object.entries(CATS).forEach(([k,v])=>{const b=document.createElement('button');b.className="chip";b.textContent=v.e;b.dataset.cat=k;b.style.borderColor=v.c;
+  b.onclick=()=>{fCat=(fCat===k?null:k);document.querySelectorAll('[data-cat]').forEach(x=>x.classList.toggle('on',x.dataset.cat===fCat));render();};chipsEl.appendChild(b);});
+render();
+setInterval(render, 60000);
+</script>
+</body>
+</html>
