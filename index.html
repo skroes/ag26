@@ -152,15 +152,21 @@ const map = L.map('map',{zoomControl:false}).setView([37.301,13.585],13);
 // Basemaps: faded licht (default — markers springen eruit, leesbaar in zon) en donker
 const BASE = {
   licht: L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:19,attribution:'© OpenStreetMap © CARTO'}),
-  donker: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:19,attribution:'© OpenStreetMap © CARTO'})
+  donker: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{maxZoom:19,attribution:'© OpenStreetMap © CARTO'}),
+  osm: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap'}),
+  sat: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'© Esri — World Imagery'})
 };
 let thema = localStorage.getItem('agr-thema') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'licht');
+let kaartlaag = localStorage.getItem('agr-laag') || (thema==='dark'?'donker':'licht');
+function zetLaag(k){ kaartlaag=k; localStorage.setItem('agr-laag',k);
+  Object.values(BASE).forEach(l=>{ if(map.hasLayer(l)) map.removeLayer(l); });
+  BASE[k].addTo(map); if(typeof bouwMenu==='function' && document.getElementById('drawer').classList.contains('open')) bouwMenu(); }
 function zetThema(t){ thema=t; localStorage.setItem('agr-thema',t);
   document.documentElement.dataset.theme = (t==='dark'?'dark':'');
-  const wil = t==='dark' ? BASE.donker : BASE.licht, weg = t==='dark' ? BASE.licht : BASE.donker;
-  if(map.hasLayer(weg)) map.removeLayer(weg); if(!map.hasLayer(wil)) wil.addTo(map); }
+  if(kaartlaag==='licht'||kaartlaag==='donker') zetLaag(t==='dark'?'donker':'licht'); }
 function togTheme(){ zetThema(thema==='dark'?'licht':'dark'); }
-zetThema(thema);
+document.documentElement.dataset.theme = (thema==='dark'?'dark':'');
+zetLaag(kaartlaag);
 L.control.zoom({position:'bottomright'}).addTo(map);
 
 // Eigen locatie (werkt betrouwbaar via HTTPS, bv. Vercel-deploy)
@@ -378,6 +384,8 @@ function mrow(aan,ico,titel,sub,fn){ return `<button class="mrow${aan?' aan':''}
 function bouwMenu(){
   let h='<div class="sectie">Wanneer</div>';
   DAGDELEN.forEach(([k,ico,t,sub])=>{ h+=mrow(fDagdeel===k,ico,t,sub,`kiesDD('${k}')`); });
+  h+='<div class="sectie">Kaartlaag</div>';
+  [['licht','◻️','Licht (faded)','markers vallen op — voor in de zon'],['donker','⬛','Donker','avond-modus'],['osm','🗺','Kleurrijk (OSM)','de klassieke OpenStreetMap-look'],['sat','🛰','Satelliet','luchtfoto (Esri)']].forEach(([k,ico,t,sub])=>{ h+=mrow(kaartlaag===k,ico,t,sub,`zetLaag('${k}')`); });
   h+='<div class="sectie">Wat</div>';
   h+=mrow(fFav,"⭐","Mijn favorieten","alleen je eigen selectie","togFavFilter()");
   h+=mrow(routeOn,"🛣","Aanrijroute","Catania → SS640 → Agrigento, met waypoints","toggleRoute()");
