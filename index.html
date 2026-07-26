@@ -81,7 +81,7 @@
 <div id="app">
   <header id="kop">
     <div class="kopregel">
-      <h1><span class="dot"></span>Agrigento <span style="font-weight:600;color:var(--kopsub);font-size:13px">· v6.2</span></h1>
+      <h1><span class="dot"></span>Agrigento <span style="font-weight:600;color:var(--kopsub);font-size:13px">· v6.3</span></h1>
       <button class="kopknop" id="chev" onclick="togKop()" aria-label="info uitklappen">▾</button>
       <button class="kopknop" onclick="togTheme()" aria-label="licht/donker">🌓</button>
       <button class="kopknop" id="ham" onclick="openMenu()" aria-label="menu">☰<span id="hambadge"></span></button>
@@ -300,11 +300,23 @@ function bouwMenu(){
   Object.entries(CATS).forEach(([k,v])=>{ h+=mrow(fCats.has(k),v.e,k.charAt(0).toUpperCase()+k.slice(1),CATINFO[k],`kiesCat('${k}')`); });
   document.getElementById('dbody').innerHTML=h;
 }
-function kiesDD(k){ fDagdeel=k; bouwMenu(); render(); }
-function kiesCat(k){ fCats.has(k)?fCats.delete(k):fCats.add(k); bouwMenu(); render(); }
-function togFavFilter(){ fFav=!fFav; bouwMenu(); render(); }
+var kiesDD=function(k){ fDagdeel=k; bouwMenu(); render(); };
+var kiesCat=function(k){ fCats.has(k)?fCats.delete(k):fCats.add(k); bouwMenu(); render(); };
+var togFavFilter=function(){ fFav=!fFav; bouwMenu(); render(); };
 // ===== header collapse + banner =====
 function togKop(){ const k=document.getElementById('kop'); k.classList.toggle('uit'); document.getElementById('chev').classList.toggle('open2'); }
+function sluitSheet(){ document.getElementById('sheet').classList.remove('open'); }
+document.getElementById('close').onclick=sluitSheet;
+map.on('click', sluitSheet);
+// filters onthouden over refresh heen
+try{ const f=JSON.parse(localStorage.getItem('agr-filters')||"{}");
+  if(f.dd) fDagdeel=f.dd; if(f.cats) fCats=new Set(f.cats); if(f.fav) fFav=true;
+}catch(e){}
+const bewaarFilters=()=>localStorage.setItem('agr-filters',JSON.stringify({dd:fDagdeel,cats:[...fCats],fav:fFav}));
+const _kiesDD=kiesDD, _kiesCat=kiesCat, _togFavFilter=togFavFilter;
+kiesDD=(k)=>{_kiesDD(k);bewaarFilters();};
+kiesCat=(k)=>{_kiesCat(k);bewaarFilters();};
+togFavFilter=()=>{_togFavFilter();bewaarFilters();};
 setTimeout(()=>document.getElementById('banner').classList.add('weg'), 20000);
 render();
 setInterval(render, 60000);
