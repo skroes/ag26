@@ -81,7 +81,7 @@
 <div id="app">
   <header id="kop">
     <div class="kopregel">
-      <h1><span class="dot"></span>Agrigento <span style="font-weight:600;color:var(--kopsub);font-size:13px">· v6.4</span></h1>
+      <h1><span class="dot"></span>Agrigento <span style="font-weight:600;color:var(--kopsub);font-size:13px">· v6.5</span></h1>
       <button class="kopknop" id="chev" onclick="togKop()" aria-label="info uitklappen">▾</button>
       <button class="kopknop" onclick="togTheme()" aria-label="licht/donker">🌓</button>
       <button class="kopknop" id="ham" onclick="openMenu()" aria-label="menu">☰<span id="hambadge"></span></button>
@@ -121,7 +121,7 @@ const POIS = [
  {id:"smgreci", naam:"Santa Maria dei Greci", cat:"bezienswaardigheid", lat:37.3130, lng:13.5778, elev:328, modus:"lopen", adres:"Via Santa Maria dei Greci, 92100 Agrigento", dagdeel:["ochtend","middag"], slots:S([[600,1140]]), kosten:"combiticket", res:false, letop:"Kerk bovenop een Griekse tempel; glazen vloer over de fundering. Stevige klim (+118 m)."},
  {id:"santospirito", naam:"Monastero di Santo Spirito", cat:"bezienswaardigheid", lat:37.3113, lng:13.5836, elev:285, modus:"lopen", adres:"Via Iacono, 92100 Agrigento", dagdeel:["ochtend","middag"], slots:{0:[[510,810]],1:[],2:[[510,1110]],3:[[510,1110]],4:[[510,1110]],5:[[510,1110]],6:[[510,1110]]}, kosten:"klein bedrag", res:false, letop:"Stucwerk van Serpotta; nonnen verkopen amaretti. Ingang lastig te vinden. ZO alleen ochtend, MA DICHT."},
  {id:"cattedrale", naam:"Cattedrale San Gerlando (dakterras)", cat:"bezienswaardigheid", lat:37.3141, lng:13.5760, elev:312, modus:"lopen", adres:"Via Duomo, 92100 Agrigento", dagdeel:["ochtend","middag"], slots:S([[570,1140]]), kosten:"±€5 incl. museum", res:false, letop:"Hoogste punt van de stad (+102 m klim) — dakterras met uitzicht. Sluit 19:00, dus zonsondergang lukt níet."},
- {id:"teatro", naam:"Teatro Pirandello", cat:"bezienswaardigheid", lat:37.3115, lng:13.5771, elev:279, modus:"lopen", adres:"Via Atenea, 92100 Agrigento", dagdeel:["ochtend"], slots:null, kosten:"klein bedrag", res:false, letop:"Openingstijden onbetrouwbaar; 's middags vaak dicht. Gok = ochtend."},
+ {id:"teatro", naam:"Teatro Pirandello", cat:"bezienswaardigheid", lat:37.3115, lng:13.5771, elev:279, modus:"lopen", adres:"Piazza Luigi Pirandello, 92100 Agrigento", dagdeel:["ochtend","middag"], slots:{0:[],1:[[540,810]],2:[[900,1080]],3:[[540,810]],4:[[900,1080]],5:[[540,810]],6:[]}, kosten:"klein bedrag", res:false, letop:"Tijden = kassa-uren (site 26-07): ma/wo/vr 9:00–13:30, di/do 15:00–18:00, weekend dicht. Bel voor bezichtiging: 0922 590220."},
  {id:"viaatenea", naam:"Via Atenea (avondwandeling)", cat:"bezienswaardigheid", lat:37.3101, lng:13.5850, elev:261, modus:"lopen", adres:"Piazzale Aldo Moro, 92100 Agrigento", dagdeel:["avond"], slots:S([[0,1440]]), kosten:"gratis", res:false, letop:"Overdag veel dicht/leegstand — alleen 's avonds de moeite."},
  // — eten & zoet —
  {id:"nuccio", naam:"Nuccio Meat&Fish", cat:"eten", lat:37.3080, lng:13.5887, elev:260, modus:"lopen", adres:"Piazza Cavour, 92100 Agrigento", dagdeel:["avond"], slots:{0:[[720,900],[1140,1350]],1:[[720,900],[1140,1350]],2:[[720,900],[1140,1350]],3:[],4:[[720,900],[1140,1350]],5:[[720,900],[1140,1350]],6:[[720,900],[1140,1350]]}, kosten:"€€", res:true, letop:"4,9★ — locals worden zonder reservering weggestuurd. WO dicht."},
