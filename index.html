@@ -302,12 +302,13 @@ function sheetWandel(seg){
 
 // ===== Tempelpad — looproute op het Valle-terrein (avond), hoogtes EU-DEM 26-07 =====
 const TEMPELPAD={
- pts:[[37.2898,13.6001],[37.2893,13.6002],[37.2887,13.6003],[37.2885,13.5990],[37.2884,13.5965],[37.28843,13.59205],[37.2887,13.5895],[37.2886,13.5875],[37.28855,13.58465]],
+ pts:[[37.2898,13.6001],[37.2893,13.6002],[37.2887,13.6003],[37.2885,13.5990],[37.2884,13.5965],[37.28843,13.59205],[37.2887,13.5895],[37.2886,13.5875],[37.28855,13.58465],[37.2888,13.5829]],
  stops:[
   {l:"1",lat:37.2898,lng:13.6001,naam:"Ingang Giunone / ticket office",info:"QR's scannen bij de poort (ticket office alleen nodig zonder online tickets). Start op 111 m."},
   {l:"2",lat:37.2887,lng:13.6003,naam:"Tempio di Giunone (119 m)",info:"Direct bij de ingang, hoogste punt op de rug — meteen je eerste uitzicht over de hele vallei + zee."},
   {l:"3",lat:37.28843,lng:13.59205,naam:"Tempio della Concordia (68 m)",info:"Hét pronkstuk — een van de best bewaarde Griekse tempels ter wereld. Onderweg passeer je de Byzantijnse graven in de muur. Verlicht = magisch."},
-  {l:"4",lat:37.28855,lng:13.58465,naam:"Tempio di Ercole (56 m) — keerpunt",info:"De oudste tempel (ca. 510 v.Chr.). Hier omkeren: zelfde pad terug omhoog naar Giunone (+63 m geleidelijk over 1,6 km — rustig aan doen)."}
+  {l:"4",lat:37.28855,lng:13.58465,naam:"Tempio di Ercole (56 m)",info:"De oudste tempel (ca. 510 v.Chr.). Keuze: terug naar Giunone (+63 m over 1,6 km) — óf door naar stop 5 als de auto daar staat."},
+  {l:"5",lat:37.2888,lng:13.5829,naam:"Porta V — parkeerplaats (uitgang-optie)",info:"Drop-off-plan: gezin afzetten bij Giunone → auto hierheen (±7 min om) → jij loopt binnendoor tegemoet → iedereen eindigt bij de auto, niemand klimt terug. ⚠️ Vraag ÉÉRST bij de Giunone-steward: 'Possiamo uscire da Porta V stasera?' — data zegt Porta V tot 19:00, avond-uitgang onzeker. Nee? Dan auto bij Giunone laten."}
  ]};
 let tempelOn=false, tempelLayers=[];
 function toggleTempel(){
@@ -324,7 +325,7 @@ function toggleTempel(){
 function sheetTempel(st){
   huidigPoi=null; document.getElementById('favbtn2').classList.remove('on');
   document.getElementById('sheetbody').innerHTML=`
-    <div class="cat">🏛 tempelpad · stop ${st.l} van 4</div><h2>${st.naam}</h2>
+    <div class="cat">🏛 tempelpad · stop ${st.l} van 5</div><h2>${st.naam}</h2>
     <div class="row"><span class="tag ok">Heen 1,6 km bergaf · terug zelfde pad +63 m · totaal ±3,2 km, 1,5-2 u</span></div>
     <div class="letop">${st.info}</div>`;
   document.getElementById('sheet').classList.add('open');
