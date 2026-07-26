@@ -81,7 +81,7 @@
 <div id="app">
   <header id="kop">
     <div class="kopregel">
-      <h1><span class="dot"></span>Agrigento <span style="font-weight:600;color:var(--kopsub);font-size:13px">· v6.3</span></h1>
+      <h1><span class="dot"></span>Agrigento <span style="font-weight:600;color:var(--kopsub);font-size:13px">· v6.4</span></h1>
       <button class="kopknop" id="chev" onclick="togKop()" aria-label="info uitklappen">▾</button>
       <button class="kopknop" onclick="togTheme()" aria-label="licht/donker">🌓</button>
       <button class="kopknop" id="ham" onclick="openMenu()" aria-label="menu">☰<span id="hambadge"></span></button>
@@ -138,6 +138,9 @@ const POIS = [
  {id:"scala", naam:"Scala dei Turchi", cat:"uitstapje", lat:37.2900, lng:13.4728, elev:16, modus:"auto", adres:"Via Panoramica, 92010 Punta Grande", dagdeel:["ochtend"], slots:S([[480,1180]]), kosten:"€6 pp (pin)", res:false, letop:"Bij hittepiek dicht 11-18u. Rots beklimmen verboden. Gratis strand-uitzichtpunt is volgens reviews net zo mooi als de betaalde toegang."},
  {id:"puntabianca", naam:"Riserva Punta Bianca", cat:"uitstapje", lat:37.1965, lng:13.6630, elev:32, modus:"auto", adres:"Strada per Punta Bianca, 92100 Agrigento", dagdeel:["ochtend"], slots:S([[510,1440]]), kosten:"gratis", res:false, letop:"Laatste 1,5 km onverhard — niet met lage auto. Rustiger dan Scala dei Turchi."},
  {id:"farmfavara", naam:"Farm Cultural Park (Favara)", cat:"uitstapje", lat:37.3134, lng:13.6584, elev:337, modus:"auto", adres:"Cortile Bentivegna, 92026 Favara", dagdeel:["ochtend","avond"], slots:{0:[[600,1200]],1:[],2:[[600,1200]],3:[[600,1200]],4:[[600,1200]],5:[[600,1200]],6:[[600,1200]]}, kosten:"±€14, buiten gratis", res:false, letop:"Kunstwijk — meningen lopen uiteen. Parkeer bij Via Umberto, niet het centro in. MA dicht."},
+ // — buurt (van Booking-lijst B&B, alleen geverifieerde — 26-07) —
+ {id:"milleluci", naam:"Milleluci Ristorante Pizzeria", cat:"eten", lat:37.30865, lng:13.58496, elev:238, modus:"lopen", adres:"Via Acrone 5, 92100 Agrigento", dagdeel:["middag","avond"], slots:null, kosten:"€€", res:false, letop:"Om de hoek (±150 m!): pizza + mediterraan, vis en vlees. Van de buurt-lijst van je B&B. Tel. 0922 080780."},
+ {id:"nepenta", naam:"Nepenta Food Cocktails", cat:"eten", lat:37.3090, lng:13.5878, elev:245, modus:"lopen", adres:"Viale della Vittoria 11, 92100 Agrigento", dagdeel:["avond"], slots:null, kosten:"€€", res:false, letop:"Food + cocktails aan het begin van de panorama-boulevard — combineert mooi met de avondwandeling. Coördinaat = begin van de straat (nr. 11 geschat). Tel. 0922 835680."},
  // — praktisch —
  {id:"maxsuper", naam:"Max Supermercati", cat:"praktisch", lat:37.3061, lng:13.5847, elev:186, modus:"lopen", adres:"Via Polibio, 92100 Agrigento", dagdeel:["ochtend","avond"], slots:{0:[],1:[[510,810],[990,1230]],2:[[510,810],[990,1230]],3:[[510,810],[990,1230]],4:[[510,810],[990,1230]],5:[[510,810],[990,1230]],6:[[510,810],[990,1230]]}, kosten:"", res:false, letop:"Dichtstbijzijnde supermarkt. Siësta-sluiting 13:30-16:30. ZO dicht."},
  {id:"station", naam:"Agrigento Centrale (taxi's)", cat:"praktisch", lat:37.3091, lng:13.5847, elev:238, modus:"lopen", adres:"Via delle Torri, 92100 Agrigento", dagdeel:["ochtend","middag","avond"], slots:S([[0,1440]]), kosten:"", res:false, letop:"Taxi's staan hier. Stadsbussen: Piazzale Rosselli, 5 min verderop. Lijn ROSSA ≈ thuisbasis→centrum; 1/2/3 → Valle + San Leone."}
@@ -175,7 +178,7 @@ function toggleLocate(){
     else { locMarker.setLatLng(ll); locCircle.setLatLng(ll); locCircle.setRadius(pos.coords.accuracy); }
   },err=>{ locOn=false; btn.classList.remove('on'); alert("Locatie geweigerd of niet beschikbaar ("+err.message+"). Tip: werkt het best via de Vercel-URL (https)."); },{enableHighAccuracy:true,maximumAge:5000});
 }
-L.marker([THUIS.lat,THUIS.lng],{icon:L.divIcon({className:'',html:'<span class="lm" style="font-size:28px">🏠</span>',iconSize:[30,30],iconAnchor:[15,15]})}).addTo(map).bindTooltip("Thuisbasis — Via Esseneto 44, 92100 Agrigento");
+L.marker([THUIS.lat,THUIS.lng],{icon:L.divIcon({className:'',html:'<span class="lm" style="font-size:28px">🏠</span>',iconSize:[30,30],iconAnchor:[15,15]})}).addTo(map).bindTooltip("B&B Sikelia Suite — Via Esseneto 44");
 
 function hav(a,b){const R=6371000,p1=a.lat*Math.PI/180,p2=b.lat*Math.PI/180,dp=p2-p1,dl=(b.lng-a.lng)*Math.PI/180;const x=Math.sin(dp/2)**2+Math.cos(p1)*Math.cos(p2)*Math.sin(dl/2)**2;return 2*R*Math.asin(Math.sqrt(x));}
 function loopInfo(p){const d=Math.round(hav(THUIS,p)*1.3/50)*50;const dh=p.elev-THUIS.elev;let zw="vlak";if(dh>60)zw="stevig ↑";else if(dh>25)zw="licht ↑";else if(dh<-60)zw="stevig ↓ (terug = klim!)";else if(dh<-25)zw="licht ↓";return {d,dh,zw};}
