@@ -81,7 +81,7 @@
 <div id="app">
   <header id="kop">
     <div class="kopregel">
-      <h1><span class="dot"></span>Agrigento <span style="font-weight:600;color:var(--kopsub);font-size:13px">· v6.5</span></h1>
+      <h1><span class="dot"></span>Agrigento <span style="font-weight:600;color:var(--kopsub);font-size:13px">· v7</span></h1>
       <button class="kopknop" id="chev" onclick="togKop()" aria-label="info uitklappen">▾</button>
       <button class="kopknop" onclick="togTheme()" aria-label="licht/donker">🌓</button>
       <button class="kopknop" id="ham" onclick="openMenu()" aria-label="menu">☰<span id="hambadge"></span></button>
@@ -265,6 +265,40 @@ function sheetKeuze(lijst){
     lijst.map(q=>`<button class="mrow" onclick="sheet(POIS[${POIS.indexOf(q)}])"><span class="ico">${CATS[q.cat].e}</span><span class="tekst">${q.naam}<small>${q.adres||q.cat}</small></span><span class="vink"></span></button>`).join("");
   document.getElementById('sheet').classList.add('open');
 }
+
+// ===== Looproute zondag-avond (OSM-straatgeometrie + EU-DEM hoogtes, 26-07) — totaal ±4,9 km =====
+const WANDEL=[
+ {l:"A", naam:"Huisje → Piazzale Aldo Moro", stat:"742 m · 222→251 m (+29, licht klimmen)", info:"Via Esseneto omhoog, rechtsaf Via Acrone — je passeert Milleluci (235 m). Eindpunt: het plein met de Porta di Ponte.", pts:[[37.3077,13.5856],[37.30777,13.58553],[37.30787,13.58524],[37.30796,13.58498],[37.30799,13.58492],[37.30799,13.58489],[37.30812,13.58453],[37.30817,13.5844],[37.30818,13.58436],[37.30818,13.58432],[37.30818,13.58428],[37.30818,13.58424],[37.30817,13.5842],[37.30815,13.58416],[37.30812,13.58409],[37.30807,13.58405],[37.30803,13.58404],[37.30809,13.58385],[37.30813,13.58375],[37.3085,13.5832],[37.30871,13.58287],[37.30885,13.58267],[37.30893,13.58258],[37.30901,13.58251],[37.30906,13.5825],[37.30909,13.5825],[37.30912,13.5825],[37.30919,13.58254],[37.30917,13.5827],[37.30916,13.5828],[37.30916,13.58283],[37.30913,13.58295],[37.30909,13.58308],[37.309,13.58338],[37.30885,13.58384],[37.30885,13.58389],[37.30883,13.58394],[37.30872,13.58429],[37.3087,13.58437],[37.3087,13.58444],[37.3087,13.58452],[37.30871,13.58474],[37.30874,13.58514],[37.30874,13.58526],[37.30875,13.58541],[37.30874,13.58551],[37.30871,13.58577],[37.3095,13.58544]]},
+ {l:"B", naam:"Via Atenea → Piazza Pirandello", stat:"875 m · 251→274 m (+23, licht golvend)", info:"Dé flaneerstraat, leeft 's avonds. Halverwege rechts: Pasticceria Infurna (cannoli!). Einde: theater + gemeentehuis.", pts:[[37.3095,13.58544],[37.31004,13.58499],[37.31008,13.58479],[37.31012,13.58455],[37.31014,13.58446],[37.31024,13.58401],[37.3103,13.58366],[37.31034,13.58342],[37.31043,13.58314],[37.31044,13.58308],[37.31047,13.58302],[37.31052,13.58289],[37.31062,13.58268],[37.31073,13.58245],[37.31078,13.58235],[37.31085,13.58219],[37.31091,13.58202],[37.31101,13.58179],[37.31121,13.58135],[37.31133,13.58111],[37.31136,13.58106],[37.31149,13.58083],[37.3116,13.58053],[37.31173,13.58024],[37.31182,13.58005],[37.31184,13.57995],[37.31186,13.57985],[37.31186,13.57962],[37.31183,13.57953],[37.31162,13.57925],[37.31148,13.57909],[37.31144,13.57903],[37.31127,13.57871],[37.31096,13.57809],[37.31096,13.57807],[37.31095,13.578],[37.31095,13.57794],[37.31095,13.57788],[37.31096,13.57785],[37.31096,13.57782],[37.31097,13.57777],[37.31114,13.57744],[37.31117,13.57738],[37.31121,13.57728],[37.31127,13.57713],[37.31128,13.57704],[37.31128,13.57701],[37.31128,13.57695]]},
+ {l:"C", naam:"Terug over Via Atenea", stat:"875 m · 274→251 m (−23, aflopend)", info:"Zelfde straat terug — andere winkels, ander licht. Zijstraatjes in het steegjes-doolhof mogen.", pts:[[37.31128,13.57695],[37.31128,13.57701],[37.31128,13.57704],[37.31127,13.57713],[37.31121,13.57728],[37.31117,13.57738],[37.31114,13.57744],[37.31097,13.57777],[37.31096,13.57782],[37.31096,13.57785],[37.31095,13.57788],[37.31095,13.57794],[37.31095,13.578],[37.31096,13.57807],[37.31096,13.57809],[37.31127,13.57871],[37.31144,13.57903],[37.31148,13.57909],[37.31162,13.57925],[37.31183,13.57953],[37.31186,13.57962],[37.31186,13.57985],[37.31184,13.57995],[37.31182,13.58005],[37.31173,13.58024],[37.3116,13.58053],[37.31149,13.58083],[37.31136,13.58106],[37.31133,13.58111],[37.31121,13.58135],[37.31101,13.58179],[37.31091,13.58202],[37.31085,13.58219],[37.31078,13.58235],[37.31073,13.58245],[37.31062,13.58268],[37.31052,13.58289],[37.31047,13.58302],[37.31044,13.58308],[37.31043,13.58314],[37.31034,13.58342],[37.3103,13.58366],[37.31024,13.58401],[37.31014,13.58446],[37.31012,13.58455],[37.31008,13.58479],[37.31004,13.58499],[37.3095,13.58544]]},
+ {l:"D", naam:"Viale della Vittoria → panorama-keerpunt", stat:"842 m · 251→245 m (vrijwel vlak!)", info:"De boulevard op: begin = Nepenta (nr. 11, cocktails/eten). Panorama over het hele tempeldal in avondlicht. Keerpunt bij het park.", pts:[[37.3095,13.58544],[37.30942,13.58597],[37.30884,13.5858],[37.30871,13.58608],[37.30865,13.58622],[37.30785,13.5881],[37.30778,13.58826],[37.30736,13.58926],[37.30732,13.58935],[37.30712,13.5898],[37.30705,13.58996],[37.30698,13.59013],[37.30689,13.59036],[37.30667,13.5909],[37.30665,13.59096],[37.30659,13.59109],[37.30621,13.59196],[37.30592,13.59263],[37.30574,13.59305]]},
+ {l:"E", naam:"Keerpunt → huisje", stat:"1584 m · 245→222 m (−23, aflopend)", info:"Boulevard terug en via het Acrone-blok bergaf naar huis. Rustig uitwandelen.", pts:[[37.30574,13.59305],[37.30592,13.59263],[37.30621,13.59196],[37.30659,13.59109],[37.30665,13.59096],[37.30667,13.5909],[37.30689,13.59036],[37.30698,13.59013],[37.30705,13.58996],[37.30712,13.5898],[37.30732,13.58935],[37.30736,13.58926],[37.30778,13.58826],[37.30785,13.5881],[37.30865,13.58622],[37.30871,13.58608],[37.30884,13.5858],[37.30942,13.58597],[37.3095,13.58544],[37.30871,13.58577],[37.30874,13.58551],[37.30875,13.58541],[37.30874,13.58526],[37.30874,13.58514],[37.30871,13.58474],[37.3087,13.58452],[37.3087,13.58444],[37.3087,13.58437],[37.30872,13.58429],[37.30883,13.58394],[37.30885,13.58389],[37.30885,13.58384],[37.309,13.58338],[37.30909,13.58308],[37.30913,13.58295],[37.30916,13.58283],[37.30916,13.5828],[37.30917,13.5827],[37.30919,13.58254],[37.30912,13.5825],[37.30909,13.5825],[37.30906,13.5825],[37.30901,13.58251],[37.30893,13.58258],[37.30885,13.58267],[37.30871,13.58287],[37.3085,13.5832],[37.30813,13.58375],[37.30809,13.58385],[37.30803,13.58404],[37.30807,13.58405],[37.30812,13.58409],[37.30815,13.58416],[37.30817,13.5842],[37.30818,13.58424],[37.30818,13.58428],[37.30818,13.58432],[37.30818,13.58436],[37.30817,13.5844],[37.30812,13.58453],[37.30799,13.58489],[37.30799,13.58492],[37.30796,13.58498],[37.30787,13.58524],[37.30777,13.58553],[37.3077,13.5856]]}
+];
+let wandelOn=false, wandelLayers=[];
+function toggleWandel(){
+  if(wandelOn){ wandelOn=false; wandelLayers.forEach(l=>map.removeLayer(l)); wandelLayers=[]; bouwMenu(); render(); return; }
+  wandelOn=true; bouwMenu(); badge();
+  const kleuren=["#1c9c8e","#2050a3","#6a35c9","#e65760","#f59e0b"];
+  WANDEL.forEach((seg,i)=>{
+    const pl=L.polyline(seg.pts,{color:kleuren[i],weight:5,opacity:.9}).addTo(map);
+    pl.on('click',()=>sheetWandel(seg)); wandelLayers.push(pl);
+    const fr=[0.5,0.35,0.65,0.45,0.85][i];
+    const mid=seg.pts[Math.floor(seg.pts.length*fr)];
+    const m=L.marker(mid,{icon:L.divIcon({className:'',html:'<div style="width:40px;height:40px;display:flex;align-items:center;justify-content:center"><span style="background:'+kleuren[i]+';color:#fff;font-family:Poppins;font-weight:700;font-size:15px;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.4)">'+seg.l+'</span></div>',iconSize:[40,40],iconAnchor:[20,20]})}).addTo(map);
+    m.on('click',()=>sheetWandel(seg)); wandelLayers.push(m);
+  });
+  const b=L.latLngBounds(WANDEL.flatMap(x=>x.pts)); map.fitBounds(b,{padding:[40,40]});
+}
+function sheetWandel(seg){
+  huidigPoi=null; document.getElementById('favbtn2').classList.remove('on');
+  const e=seg.pts[seg.pts.length-1];
+  document.getElementById('sheetbody').innerHTML=`
+    <div class="cat">🚶 looproute zo-avond · segment ${seg.l}</div><h2>${seg.l} · ${seg.naam}</h2>
+    <div class="row"><span class="tag ok">📏 ${seg.stat}</span></div>
+    <div class="letop">${seg.info}</div>
+    <a class="go" href="https://www.google.com/maps/dir/?api=1&destination=${e[0]},${e[1]}&travelmode=walking" target="_blank">📍 Loop naar eind van ${seg.l}</a>`;
+  document.getElementById('sheet').classList.add('open');
+}
 let fDagdeel="nu", fCats=new Set(), markers=[];
 const DAGDELEN=[["alles","🗺","Alles","geen tijdfilter"],["nu","🟢","Nu","open én verstandig op dit moment"],["ochtend","🌅","Ochtend","vroeg, vóór de hitte"],["middag","☀️","Middag","11–18 u: binnen/gekoeld"],["avond","🌙","Avond","na 18 u, ook de tempels"]];
 const CATINFO={uitzicht:"mooiste uitzichten & terrassen",bezienswaardigheid:"tempels, kerken, musea",eten:"restaurants — reserveer!",zoet:"ijs & cannoli",strand:"zee & lungomare",uitstapje:"met de auto eropuit",praktisch:"super, taxi, station"};
@@ -286,7 +320,7 @@ function render(){
   badge();
 }
 function badge(){
-  let n=fCats.size+(fFav?1:0)+(routeOn?1:0)+(fDagdeel!=="nu"&&fDagdeel!=="alles"?1:0);
+  let n=fCats.size+(fFav?1:0)+(routeOn?1:0)+(wandelOn?1:0)+(fDagdeel!=="nu"&&fDagdeel!=="alles"?1:0);
   const b=document.getElementById('hambadge');
   b.style.display=n?"inline-flex":"none"; b.textContent=n;
 }
@@ -300,6 +334,7 @@ function bouwMenu(){
   h+='<div class="sectie">Wat</div>';
   h+=mrow(fFav,"⭐","Mijn favorieten","alleen je eigen selectie","togFavFilter()");
   h+=mrow(routeOn,"🛣","Aanrijroute","Catania → SS640 → Agrigento, met waypoints","toggleRoute()");
+  h+=mrow(wandelOn,"🚶","Looproute zo-avond","huisje → Atenea → boulevard → huisje · 4,9 km, 5 segmenten","toggleWandel()");
   Object.entries(CATS).forEach(([k,v])=>{ h+=mrow(fCats.has(k),v.e,k.charAt(0).toUpperCase()+k.slice(1),CATINFO[k],`kiesCat('${k}')`); });
   document.getElementById('dbody').innerHTML=h;
 }
