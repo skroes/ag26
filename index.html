@@ -81,7 +81,7 @@
 <div id="app">
   <header id="kop">
     <div class="kopregel">
-      <h1><span class="dot"></span>Agrigento <span style="font-weight:600;color:var(--kopsub);font-size:13px">· v7.1</span></h1>
+      <h1><span class="dot"></span>Agrigento <span style="font-weight:600;color:var(--kopsub);font-size:13px">· v8</span></h1>
       <button class="kopknop" id="chev" onclick="togKop()" aria-label="info uitklappen">▾</button>
       <button class="kopknop" onclick="togTheme()" aria-label="licht/donker">🌓</button>
       <button class="kopknop" id="ham" onclick="openMenu()" aria-label="menu">☰<span id="hambadge"></span></button>
@@ -135,7 +135,21 @@ const POIS = [
  // — strand & uitstapjes —
  {id:"sanleone", naam:"San Leone — Lungomare", cat:"strand", lat:37.2599, lng:13.5833, elev:4, modus:"auto", adres:"Lungomare Falcone e Borsellino, 92100 San Leone", dagdeel:["avond"], slots:S([[0,1440]]), kosten:"gratis", res:false, letop:"Boulevard vol restaurants en ijs. Druk in het weekend."},
  {id:"sanleonestrand", naam:"Spiaggia di San Leone", cat:"strand", lat:37.2581, lng:13.5945, elev:5, modus:"auto", adres:"Viale delle Dune, 92100 San Leone", dagdeel:["ochtend","avond"], slots:S([[0,1440]]), kosten:"gratis", res:false, letop:"Zacht zand; recente klachten over afval. Waterschoenen aanbevolen. Lido met parasol = ook middag ok."},
- {id:"scala", naam:"Scala dei Turchi", cat:"uitstapje", lat:37.2900, lng:13.4728, elev:16, modus:"auto", adres:"Via Panoramica, 92010 Punta Grande", dagdeel:["ochtend"], slots:S([[480,1180]]), kosten:"€6 pp (pin)", res:false, letop:"Bij hittepiek dicht 11-18u. Rots beklimmen verboden. Gratis strand-uitzichtpunt is volgens reviews net zo mooi als de betaalde toegang."},
+ // ===== SCALA DEI TURCHI (Realmonte) — gebied toegevoegd 27-07 op verzoek Serge =====
+ // parkeren
+ {id:"p-michelangelo", naam:"Parking Scala dei Turchi (L. Michelangelo)", cat:"parkeren", lat:37.289692, lng:13.478861, elev:46, modus:"auto", adres:"37.289692, 13.478861", dagdeel:["ochtend","middag","avond"], slots:S([[510,1320]]), kosten:"±€6 eerste uren", res:false, letop:"Open 8:30–22:00. Trap/shuttle naar het strand. Dichtst bij de toegang — start van route A."},
+ {id:"p-sp68", naam:"Parking Scala dei Turchi (SP68 nr. 40)", cat:"parkeren", lat:37.289152, lng:13.478529, elev:39, modus:"auto", adres:"37.289152, 13.478529", dagdeel:["ochtend","middag","avond"], slots:S([[510,1140]]), kosten:"±€6 / 4 u, daarna €10", res:false, letop:"Open 8:30–19:00. Let op het tarief-omslagpunt na 4 uur."},
+ {id:"p-parkingland", naam:"Parkingland", cat:"parkeren", lat:37.291594, lng:13.473382, elev:49, modus:"auto", adres:"37.291594, 13.473382", dagdeel:["ochtend","middag","avond"], slots:S([[480,1200]]), kosten:"±€3/2u buiten hoogseizoen", res:false, letop:"Open 8:00–20:00. Goedkoper maar verder lopen; shuttle beschikbaar."},
+ {id:"p-straat", naam:"Gratis straatparkeren (langs SP68)", cat:"parkeren", lat:37.291, lng:13.475, elev:54, modus:"auto", adres:"SP68 tussen 37.2890,13.4790 en 37.2930,13.4710", dagdeel:["ochtend"], slots:S([[0,1440]]), kosten:"gratis", res:false, letop:"Vroeg in de ochtend meestal ruimte langs de weg. Gratis — maar wees er vóór 9:30."},
+ // strand
+ {id:"strand-falesia", naam:"Spiaggia sotto la falesia (onder de rotswand)", cat:"strand", lat:37.2899, lng:13.4745, elev:26, modus:"auto", adres:"37.289900, 13.474500", dagdeel:["ochtend","avond"], slots:S([[0,1440]]), kosten:"gratis", res:false, letop:"Vrij toegankelijk zandstrand, gratis. ⚠️ Weinig schaduw — ochtend of laat."},
+ {id:"lido-majata", naam:"Lido Majata", cat:"strand", lat:37.287807, lng:13.481603, elev:8, modus:"auto", adres:"37.287807, 13.481603", dagdeel:["ochtend","middag","avond"], slots:S([[510,1170]]), kosten:"lido-tarief", res:false, letop:"Open 8:30–19:30. Bar/restaurant, ligbedden, toilet — en GEEN trappen naar het strand. Met parasol ook in de middag houdbaar."},
+ {id:"lido-scala", naam:"Ristorante Lido Scala dei Turchi", cat:"strand", lat:37.288824, lng:13.478119, elev:30, modus:"auto", adres:"37.288824, 13.478119", dagdeel:["ochtend","middag","avond"], slots:S([[480,1350]]), kosten:"€€", res:false, letop:"Open 8:00–22:30. Belangrijkste toegang: trap vanaf het terras naar het strand."},
+ {id:"capo-rossello", naam:"Spiaggia di Capo Rossello / Lido Rossello", cat:"strand", lat:37.294657, lng:13.456668, elev:10, modus:"auto", adres:"37.294657, 13.456668", dagdeel:["ochtend","middag","avond"], slots:S([[0,1440]]), kosten:"strand gratis, lido-tarief", res:false, letop:"Fijn zandstrand met mooi zicht op de rots. Parkeren in het dorp. Basis-tip: lido hier + wandeling naar de Scala."},
+ // fotopunten
+ {id:"belvedere", naam:"Belvedere Scala dei Turchi", cat:"fotopunt", lat:37.293285, lng:13.47012, elev:37, modus:"auto", adres:"37.293285, 13.470120", dagdeel:["ochtend","avond"], slots:S([[0,1440]]), kosten:"gratis", res:false, letop:"★ Gratis uitzichtpunt van bovenaf langs de weg — het beste totaalplaatje van de hele witte trap. Ochtendlicht = zacht wit; zonsondergang = crème/oranje."},
+ {id:"falesia", naam:"Falesia Scala dei Turchi (de rotswand zelf)", cat:"fotopunt", lat:37.289967, lng:13.472762, elev:10, modus:"auto", adres:"37.289967, 13.472762", dagdeel:["ochtend","avond"], slots:S([[600,1140]]), kosten:"€6 p.p., alleen elektronisch ter plekke", res:false, letop:"Open ca. 10:00–19:00. ⚠️ Je mag NIET op de marne (witte rots) lopen — hek op afstand, boete vanaf €50. Bij hittepiek sluit de gemeente de toegang."},
+ {id:"foto-strand", naam:"Fotopunt vanaf het strand (oostzijde)", cat:"fotopunt", lat:37.2894, lng:13.476, elev:29, modus:"auto", adres:"37.289400, 13.476000", dagdeel:["ochtend","avond"], slots:S([[0,1440]]), kosten:"gratis", res:false, letop:"Zijaanzicht van de hele trap met zee ervoor. Gratis, geen ticket nodig — vaak het mooiere plaatje dan van bovenop."},
  {id:"puntabianca", naam:"Riserva Punta Bianca", cat:"uitstapje", lat:37.1965, lng:13.6630, elev:32, modus:"auto", adres:"Strada per Punta Bianca, 92100 Agrigento", dagdeel:["ochtend"], slots:S([[510,1440]]), kosten:"gratis", res:false, letop:"Laatste 1,5 km onverhard — niet met lage auto. Rustiger dan Scala dei Turchi."},
  {id:"farmfavara", naam:"Farm Cultural Park (Favara)", cat:"uitstapje", lat:37.3134, lng:13.6584, elev:337, modus:"auto", adres:"Cortile Bentivegna, 92026 Favara", dagdeel:["ochtend","avond"], slots:{0:[[600,1200]],1:[],2:[[600,1200]],3:[[600,1200]],4:[[600,1200]],5:[[600,1200]],6:[[600,1200]]}, kosten:"±€14, buiten gratis", res:false, letop:"Kunstwijk — meningen lopen uiteen. Parkeer bij Via Umberto, niet het centro in. MA dicht."},
  // — buurt (van Booking-lijst B&B, alleen geverifieerde — 26-07) —
@@ -147,7 +161,7 @@ const POIS = [
 ];
 // ====== EINDE DATA ======
 
-const CATS = {uitzicht:{c:"#b3261e",e:"🌇"},bezienswaardigheid:{c:"#c8871e",e:"🏛"},eten:{c:"#0b5e8a",e:"🍽"},zoet:{c:"#8e44ad",e:"🍦"},strand:{c:"#148f9a",e:"🏖"},uitstapje:{c:"#2e7d32",e:"🚗"},praktisch:{c:"#555",e:"ℹ️"}};
+const CATS = {uitzicht:{c:"#b3261e",e:"🌇"},bezienswaardigheid:{c:"#c8871e",e:"🏛"},eten:{c:"#0b5e8a",e:"🍽"},zoet:{c:"#8e44ad",e:"🍦"},strand:{c:"#f59e0b",e:"🏖"},parkeren:{c:"#2050a3",e:"🅿️"},fotopunt:{c:"#b3261e",e:"📷"},uitstapje:{c:"#2e7d32",e:"🚗"},praktisch:{c:"#555",e:"ℹ️"}};
 const map = L.map('map',{zoomControl:false}).setView([37.301,13.585],13);
 // Basemaps: faded licht (default — markers springen eruit, leesbaar in zon) en donker
 const BASE = {
@@ -352,9 +366,45 @@ function sheetTempel(st){
     <div class="letop" style="font-size:15.5px;line-height:1.55">${st.info}</div>`;
   document.getElementById('sheet').classList.add('open');
 }
+
+// ===== Scala dei Turchi — looproutes (opgave Serge 27-07) =====
+const SCALA_CENTER=[37.2905,13.4700], SCALA_ZOOM=14;
+const SCALA_ROUTES=[
+ {l:"A", naam:"Route A — kortst, met trap", kleur:"#2e7d32", stat:"±800 m · 10-15 min · trap", info:"Kortste weg: parking L. Michelangelo → Ristorante Lido (trap af) → fotopunt strand → falesia.",
+  pts:[[37.289692,13.478861],[37.288824,13.478119],[37.2894,13.476],[37.289967,13.472762]]},
+ {l:"B", naam:"Route B — geen trappen, over het zand", kleur:"#f59e0b", stat:"±1,1 km · 15-20 min · vlak", info:"Trapvrij: Lido Majata → over het zand westwaarts → fotopunt strand → falesia. Beste keuze met bagage/koelbox.",
+  pts:[[37.287807,13.481603],[37.289,13.4775],[37.2894,13.476],[37.289967,13.472762]]},
+ {l:"C", naam:"Route C — vanaf Capo Rossello (lastig)", kleur:"#777", stat:"±1,3 km · klauteren", info:"⚠️ Geen vlak strandpad — deels klauteren over rotsen. Alleen met goed schoeisel en zonder kleine bagage.",
+  pts:[[37.294657,13.456668],[37.2915,13.463],[37.289967,13.472762]]}
+];
+let scalaOn=false, scalaLayers=[];
+function toggleScala(){
+  if(scalaOn){ scalaOn=false; scalaLayers.forEach(l=>map.removeLayer(l)); scalaLayers=[]; bouwMenu(); badge(); return; }
+  scalaOn=true; bouwMenu(); badge();
+  SCALA_ROUTES.forEach(r=>{
+    const pl=L.polyline(r.pts,{color:r.kleur,weight:5,opacity:.95,dashArray:'6 8',lineCap:'round'}).addTo(map);
+    pl.on('click',()=>sheetScala(r)); scalaLayers.push(pl);
+    const mid=r.pts[Math.floor(r.pts.length/2)];
+    const m=L.marker(mid,{icon:L.divIcon({className:'',html:'<div style="width:40px;height:40px;display:flex;align-items:center;justify-content:center"><span style="background:'+r.kleur+';color:#fff;font-family:Poppins;font-weight:700;font-size:15px;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.4)">'+r.l+'</span></div>',iconSize:[40,40],iconAnchor:[20,20]})}).addTo(map);
+    m.on('click',()=>sheetScala(r)); scalaLayers.push(m);
+  });
+  map.setView(SCALA_CENTER, SCALA_ZOOM);
+}
+function sheetScala(r){
+  huidigPoi=null; document.getElementById('favbtn2').classList.remove('on');
+  const e=r.pts[r.pts.length-1];
+  document.getElementById('sheetbody').innerHTML=`
+    <div class="cat">🤍 Scala dei Turchi · looproute ${r.l}</div><h2>${r.naam}</h2>
+    <div class="row"><span class="tag ok">📏 ${r.stat}</span></div>
+    <div class="letop" style="font-size:15px;line-height:1.5">${r.info}</div>
+    <a class="go" href="https://www.google.com/maps/dir/?api=1&destination=${e[0]},${e[1]}&travelmode=walking" target="_blank">📍 Loop naar het eindpunt</a>`;
+  document.getElementById('sheet').classList.add('open');
+}
+function naarScala(){ map.setView(SCALA_CENTER, SCALA_ZOOM); sluitMenu(); }
+function naarAgrigento(){ map.setView([THUIS.lat,THUIS.lng], 14); sluitMenu(); }
 let fDagdeel="nu", fCats=new Set(), markers=[];
 const DAGDELEN=[["alles","🗺","Alles","geen tijdfilter"],["nu","🟢","Nu","open én verstandig op dit moment"],["ochtend","🌅","Ochtend","vroeg, vóór de hitte"],["middag","☀️","Middag","11–18 u: binnen/gekoeld"],["avond","🌙","Avond","na 18 u, ook de tempels"]];
-const CATINFO={uitzicht:"mooiste uitzichten & terrassen",bezienswaardigheid:"tempels, kerken, musea",eten:"restaurants — reserveer!",zoet:"ijs & cannoli",strand:"zee & lungomare",uitstapje:"met de auto eropuit",praktisch:"super, taxi, station"};
+const CATINFO={parkeren:"waar je de auto kwijt kan (Scala)",fotopunt:"beste foto-plekken",uitzicht:"mooiste uitzichten & terrassen",bezienswaardigheid:"tempels, kerken, musea",eten:"restaurants — reserveer!",zoet:"ijs & cannoli",strand:"zee & lungomare",uitstapje:"met de auto eropuit",praktisch:"super, taxi, station"};
 function nowMin(){const n=new Date();return n.getHours()*60+n.getMinutes();}
 function past(p){
   if(fFav && !favs.has(p.id)) return false;
@@ -373,7 +423,7 @@ function render(){
   badge();
 }
 function badge(){
-  let n=fCats.size+(fFav?1:0)+(routeOn?1:0)+(wandelOn?1:0)+(tempelOn?1:0)+(fDagdeel!=="nu"&&fDagdeel!=="alles"?1:0);
+  let n=fCats.size+(fFav?1:0)+(routeOn?1:0)+(wandelOn?1:0)+(tempelOn?1:0)+(scalaOn?1:0)+(fDagdeel!=="nu"&&fDagdeel!=="alles"?1:0);
   const b=document.getElementById('hambadge');
   b.style.display=n?"inline-flex":"none"; b.textContent=n;
 }
@@ -382,7 +432,10 @@ function openMenu(){ bouwMenu(); document.getElementById('drawer').classList.add
 function sluitMenu(){ document.getElementById('drawer').classList.remove('open'); document.getElementById('scrim').classList.remove('open'); }
 function mrow(aan,ico,titel,sub,fn){ return `<button class="mrow${aan?' aan':''}" onclick="${fn}"><span class="ico">${ico}</span><span class="tekst">${titel}<small>${sub}</small></span><span class="vink">✓</span></button>`; }
 function bouwMenu(){
-  let h='<div class="sectie">Wanneer</div>';
+  let h='<div class="sectie">Gebied</div>';
+  h+=mrow(false,"🏛","Agrigento","stad, tempels, thuisbasis","naarAgrigento()");
+  h+=mrow(false,"🤍","Scala dei Turchi","Realmonte — parkeren, strand, fotopunten","naarScala()");
+  h+='<div class="sectie">Wanneer</div>';
   DAGDELEN.forEach(([k,ico,t,sub])=>{ h+=mrow(fDagdeel===k,ico,t,sub,`kiesDD('${k}')`); });
   h+='<div class="sectie">Kaartlaag</div>';
   [['licht','◻️','Licht (faded)','markers vallen op — voor in de zon'],['donker','⬛','Donker','avond-modus'],['osm','🗺','Kleurrijk (OSM)','de klassieke OpenStreetMap-look'],['sat','🛰','Satelliet','luchtfoto (Esri)']].forEach(([k,ico,t,sub])=>{ h+=mrow(kaartlaag===k,ico,t,sub,`zetLaag('${k}')`); });
@@ -391,6 +444,7 @@ function bouwMenu(){
   h+=mrow(routeOn,"🛣","Aanrijroute","Catania → SS640 → Agrigento, met waypoints","toggleRoute()");
   h+=mrow(wandelOn,"🚶","Looproute zo-avond","huisje → Atenea → boulevard → huisje · 4,9 km, 5 segmenten","toggleWandel()");
   h+=mrow(tempelOn,"🏛","Tempelpad (op het terrein)","Giunone → Concordia → Ercole en terug · 3,2 km","toggleTempel()");
+  h+=mrow(scalaOn,"🤍","Scala-looproutes A/B/C","kort-met-trap · trapvrij · vanaf Capo Rossello","toggleScala()");
   Object.entries(CATS).forEach(([k,v])=>{ h+=mrow(fCats.has(k),v.e,k.charAt(0).toUpperCase()+k.slice(1),CATINFO[k],`kiesCat('${k}')`); });
   document.getElementById('dbody').innerHTML=h;
 }
